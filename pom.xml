@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
     <groupId>com.alibaba</groupId>
 	<artifactId>dubbo-parent</artifactId>
-	<version>2.5.4-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>The parent project of dubbo</description>
@@ -81,44 +81,47 @@
 	</profiles>
 	<properties>
 		<!-- Common libs -->
-		<spring_version>3.2.16.RELEASE</spring_version>
-		<javassist_version>3.20.0-GA</javassist_version>
+		<spring_version>5.0.0.RC2</spring_version>
+		<javassist_version>3.21.0-GA</javassist_version>
 		<netty_version>3.2.5.Final</netty_version>
-		<mina_version>1.1.7</mina_version>
-		<grizzly_version>2.1.4</grizzly_version>
-		<httpclient_version>4.1.2</httpclient_version>
+		<netty.io_version>4.1.12.Final</netty.io_version>
+		<mina_version>2.0.16</mina_version>
+		<grizzly_version>2.3.31</grizzly_version>
+		<httpclient_version>4.5.3</httpclient_version>
 		<hessian_lite_version>3.2.1-fixed-2</hessian_lite_version>
-		<xstream_version>1.4.1</xstream_version>
-		<fastjson_version>1.2.31</fastjson_version>
+		<xstream_version>1.4.9</xstream_version>
+		<fastjson_version>1.2.34</fastjson_version>
+        <gson.version>2.8.1</gson.version>
 		<bsf_version>3.1</bsf_version>
 		<sorcerer_version>0.8</sorcerer_version>
-		<zookeeper_version>3.3.3</zookeeper_version>
+		<zookeeper_version>3.4.10</zookeeper_version>
 		<zkclient_version>0.1</zkclient_version>
-		<curator_version>1.1.16</curator_version>
-		<jedis_version>2.1.0</jedis_version>
-		<xmemcached_version>1.3.6</xmemcached_version>
-		<cxf_version>2.6.1</cxf_version>
-		<thrift_version>0.8.0</thrift_version>
-		<jfreechart_version>1.0.13</jfreechart_version>
+		<curator_version>3.3.0</curator_version>
+		<jedis_version>2.9.0</jedis_version>
+		<xmemcached_version>2.3.1</xmemcached_version>
+		<cxf_version>3.1.12</cxf_version>
+		<thrift_version>0.10.0</thrift_version>
+		<jfreechart_version>1.0.19</jfreechart_version>
 		<hessian_version>4.0.7</hessian_version>
-		<servlet_version>2.5</servlet_version>
-		<jetty_version>6.1.26</jetty_version>
-		<validation_version>1.0.0.GA</validation_version>
-		<hibernate_validator_version>4.2.0.Final</hibernate_validator_version>
-		<jcache_version>0.4</jcache_version>
-		<sca_version>2.0-M5.1</sca_version>
-		<guice_version>3.0</guice_version>
-		<cglib_version>2.2</cglib_version>
-		<webx_version>3.0.8</webx_version>
+		<servlet_version>4.0.0-b07</servlet_version>
+		<jetty_version>9.4.6.v20170531</jetty_version>
+		<validation_version>1.1.0.Final</validation_version>
+		<hibernate_validator_version>6.0.0.CR2</hibernate_validator_version>
+		<jcache_version>1.0.0</jcache_version>
+		<sca_version>2.0.1</sca_version>
+		<guice_version>4.1.0</guice_version>
+		<cglib_version>3.2.5</cglib_version>
+		<webx_version>3.2.4</webx_version>
 		<!-- Log libs -->
 		<slf4j_version>1.7.25</slf4j_version>
-		<jcl_version>1.1</jcl_version>
-		<log4j_version>1.2.16</log4j_version>
-		<logback_version>1.2.2</logback_version>
+        <jcl_version>1.1</jcl_version>
+        <log4j_version>1.2.17</log4j_version>
+        <logback_version>1.2.3</logback_version>
+        <log4j2_version>2.8.2</log4j2_version>
 		<!-- Test libs -->
-		<junit_version>4.10</junit_version>
-		<easymock_version>3.0</easymock_version>
-		<jmockit_version>0.999.8</jmockit_version>
+		<junit_version>4.12</junit_version>
+		<easymock_version>3.4</easymock_version>
+		<jmockit_version>1.33</jmockit_version>
 		<!-- Build args -->
 		<argline>-server -Xms64m -Xmx256m -XX:PermSize=64m -XX:MaxPermSize=128m -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true</argline>
 		<skip_maven_deploy>false</skip_maven_deploy>
@@ -131,8 +134,8 @@
 
 		<!-- for maven compiler plugin -->
 		<maven_compiler_plugin_version>3.5.1</maven_compiler_plugin_version>
-		<java_source_version>1.6</java_source_version>
-		<java_target_version>1.6</java_target_version>
+		<java_source_version>1.8</java_source_version>
+		<java_target_version>1.8</java_target_version>
 		<file_encoding>UTF-8</file_encoding>
 
 	</properties>
@@ -155,6 +158,12 @@
 				<groupId>org.jboss.netty</groupId>
 				<artifactId>netty</artifactId>
 				<version>${netty_version}</version>
+			</dependency>
+			<!--netty.io version -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-all</artifactId>
+				<version>${netty.io_version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.mina</groupId>
@@ -181,6 +190,11 @@
 				<artifactId>fastjson</artifactId>
 				<version>${fastjson_version}</version>
 			</dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
@@ -207,7 +221,7 @@
 				<version>${zkclient_version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.netflix.curator</groupId>
+				<groupId>org.apache.curator</groupId>
 				<artifactId>curator-framework</artifactId>
 				<version>${curator_version}</version>
 			</dependency>
@@ -251,11 +265,16 @@
 				<artifactId>servlet-api</artifactId>
 				<version>${servlet_version}</version>
 			</dependency>
-			<dependency>
+			<!--<dependency>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty</artifactId>
 				<version>${jetty_version}</version>
-			</dependency>
+			</dependency>-->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty_version}</version>
+            </dependency>
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
@@ -293,11 +312,6 @@
 				<version>${slf4j_version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>${slf4j_version}</version>
-			</dependency>
-			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging-api</artifactId>
 				<version>${jcl_version}</version>
@@ -312,6 +326,31 @@
 				<artifactId>logback-classic</artifactId>
 				<version>${logback_version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j2_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${log4j2_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jcl</artifactId>
+                <version>${log4j2_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j2_version}</version>
+            </dependency>
 			<!-- Test libs -->
 			<dependency>
 				<groupId>junit</groupId>
@@ -326,7 +365,7 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.googlecode.jmockit</groupId>
+				<groupId>org.jmockit</groupId>
 				<artifactId>jmockit</artifactId>
 				<version>${jmockit_version}</version>
 				<scope>test</scope>
