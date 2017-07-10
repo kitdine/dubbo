@@ -44,15 +44,11 @@ public abstract class Proxy
 
 	private static final String PACKAGE_NAME = Proxy.class.getPackage().getName();
 
-	public static final InvocationHandler RETURN_NULL_INVOKER = new InvocationHandler(){
-		public Object invoke(Object proxy, Method method, Object[] args){ return null; }
-	};
+	public static final InvocationHandler RETURN_NULL_INVOKER = (proxy, method, args) -> null;
 
-	public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler(){
-		public Object invoke(Object proxy, Method method, Object[] args){ throw new UnsupportedOperationException("Method [" + ReflectUtils.getName(method) + "] unimplemented."); }
-	};
+	public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = (proxy, method, args) -> { throw new UnsupportedOperationException("Method [" + ReflectUtils.getName(method) + "] unimplemented."); };
 
-	private static final Map<ClassLoader, Map<String, Object>> ProxyCacheMap = new WeakHashMap<ClassLoader, Map<String, Object>>();
+	private static final Map<ClassLoader, Map<String, Object>> ProxyCacheMap = new WeakHashMap<>();
 
 	private static final Object PendingGenerationMarker = new Object();
 
@@ -80,24 +76,23 @@ public abstract class Proxy
 			throw new IllegalArgumentException("interface limit exceeded");
 		
 		StringBuilder sb = new StringBuilder();
-		for(int i=0;i<ics.length;i++)
-		{
-			String itf = ics[i].getName();
-			if( !ics[i].isInterface() )
+		for (Class<?> ic : ics) {
+			String itf = ic.getName();
+			if (!ic.isInterface()) {
 				throw new RuntimeException(itf + " is not a interface.");
+			}
 
 			Class<?> tmp = null;
-			try
-			{
+			try {
 				tmp = Class.forName(itf, false, cl);
+			} catch (ClassNotFoundException ignored) {
 			}
-			catch(ClassNotFoundException e)
-			{}
 
-			if( tmp != ics[i] )
-				throw new IllegalArgumentException(ics[i] + " is not visible from class loader");
+			if (tmp != ic) {
+				throw new IllegalArgumentException(ic + " is not visible from class loader");
+			}
 
-		    sb.append(itf).append(';');
+			sb.append(itf).append(';');
 		}
 
 		// use interface class name list as key.
@@ -107,12 +102,7 @@ public abstract class Proxy
 		Map<String, Object> cache;
 		synchronized( ProxyCacheMap )
 		{
-			cache = ProxyCacheMap.get(cl);
-			if( cache == null )
-		    {
-				cache = new HashMap<String, Object>();
-				ProxyCacheMap.put(cl, cache);
-		    }
+			cache = ProxyCacheMap.computeIfAbsent(cl, k -> new HashMap<>());
 		}
 
 		Proxy proxy = null;
@@ -130,7 +120,7 @@ public abstract class Proxy
 
 				if( value == PendingGenerationMarker )
 				{
-					try{ cache.wait(); }catch(InterruptedException e){}
+					try{ cache.wait(); }catch(InterruptedException ignored){}
 				}
 				else
 				{
@@ -148,31 +138,27 @@ public abstract class Proxy
 		{
 			ccp = ClassGenerator.newInstance(cl);
 
-			Set<String> worked = new HashSet<String>();
-			List<Method> methods = new ArrayList<Method>();
+			Set<String> worked = new HashSet<>();
+			List<Method> methods = new ArrayList<>();
 
-			for(int i=0;i<ics.length;i++)
-			{
-				if( !Modifier.isPublic(ics[i].getModifiers()) )
-				{
-					String npkg = ics[i].getPackage().getName();
-					if( pkg == null )
-					{
+			for (Class<?> ic : ics) {
+				if (!Modifier.isPublic(ic.getModifiers())) {
+					String npkg = ic.getPackage().getName();
+					if (pkg == null) {
 						pkg = npkg;
-					}
-					else
-					{
-						if( !pkg.equals(npkg)  )
+					} else {
+						if (!pkg.equals(npkg)) {
 							throw new IllegalArgumentException("non-public interfaces from different packages");
+						}
 					}
 				}
-				ccp.addInterface(ics[i]);
+				ccp.addInterface(ic);
 
-				for( Method method : ics[i].getMethods() )
-				{
+				for (Method method : ic.getMethods()) {
 					String desc = ReflectUtils.getDesc(method);
-					if( worked.contains(desc) )
+					if (worked.contains(desc)) {
 						continue;
+					}
 					worked.add(desc);
 
 					int ix = methods.size();
@@ -180,11 +166,13 @@ public abstract class Proxy
 					Class<?>[] pts = method.getParameterTypes();
 
 					StringBuilder code = new StringBuilder("Object[] args = new Object[").append(pts.length).append("];");
-					for(int j=0;j<pts.length;j++)
-						code.append(" args[").append(j).append("] = ($w)$").append(j+1).append(";");
-					code.append(" Object ret = handler.invoke(this, methods[" + ix + "], args);");
-					if( !Void.TYPE.equals(rt) )
+					for (int j = 0; j < pts.length; j++) {
+						code.append(" args[").append(j).append("] = ($w)$").append(j + 1).append(";");
+					}
+					code.append(" Object ret = handler.invoke(this, methods[").append(ix).append("], args);");
+					if (!Void.TYPE.equals(rt)) {
 						code.append(" return ").append(asArgument(rt, "ret")).append(";");
+					}
 
 					methods.add(method);
 					ccp.addMethod(method.getName(), method.getModifiers(), rt, pts, method.getExceptionTypes(), code.toString());
@@ -234,7 +222,7 @@ public abstract class Proxy
 				if( proxy == null )
 					cache.remove(key);
 				else
-					cache.put(key, new WeakReference<Proxy>(proxy));
+					cache.put(key, new WeakReference<>(proxy));
 				cache.notifyAll();
 			}
 		}

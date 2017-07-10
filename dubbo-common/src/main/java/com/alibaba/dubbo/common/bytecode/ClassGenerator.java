@@ -55,7 +55,7 @@ public final class ClassGenerator
 
 	private static final String SIMPLE_NAME_TAG = "<init>";
 
-	private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool
+	private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<>(); //ClassLoader - ClassPool
 
 	public static ClassGenerator newInstance()
 	{
@@ -124,7 +124,7 @@ public final class ClassGenerator
 	public ClassGenerator addInterface(String cn)
 	{
 		if( mInterfaces == null )
-			mInterfaces = new HashSet<String>();
+			mInterfaces = new HashSet<>();
 		mInterfaces.add(cn);
 		return this;
 	}
@@ -149,7 +149,7 @@ public final class ClassGenerator
 	public ClassGenerator addField(String code)
 	{
 		if( mFields == null )
-			mFields = new ArrayList<String>();
+			mFields = new ArrayList<>();
 		mFields.add(code);
 		return this;
 	}
@@ -176,7 +176,7 @@ public final class ClassGenerator
 	public ClassGenerator addMethod(String code)
 	{
 		if( mMethods == null )
-			mMethods = new ArrayList<String>();
+			mMethods = new ArrayList<>();
 		mMethods.add(code);
 		return this;
 	}
@@ -191,24 +191,26 @@ public final class ClassGenerator
 		StringBuilder sb = new StringBuilder();
 		sb.append(modifier(mod)).append(' ').append(ReflectUtils.getName(rt)).append(' ').append(name);
 		sb.append('(');
-		for(int i=0;i<pts.length;i++)
-		{
-			if( i > 0 )
-				sb.append(',');
-			sb.append(ReflectUtils.getName(pts[i]));
-			sb.append(" arg").append(i);
-		}
+		getPtsName(sb, pts);
+//		for(int i=0;i<pts.length;i++)
+//		{
+//			if( i > 0 )
+//				sb.append(',');
+//			sb.append(ReflectUtils.getName(pts[i]));
+//			sb.append(" arg").append(i);
+//		}
 		sb.append(')');
-		if( ets != null && ets.length > 0 )
-		{
-			sb.append(" throws ");
-			for(int i=0;i<ets.length;i++)
-			{
-				if( i > 0 )
-					sb.append(',');
-				sb.append(ReflectUtils.getName(ets[i]));
-			}
-		}
+		getEtsName(sb, ets);
+//		if( ets != null && ets.length > 0 )
+//		{
+//			sb.append(" throws ");
+//			for(int i=0;i<ets.length;i++)
+//			{
+//				if( i > 0 )
+//					sb.append(',');
+//				sb.append(ReflectUtils.getName(ets[i]));
+//			}
+//		}
 		sb.append('{').append(body).append('}');
 		return addMethod(sb.toString());
 	}
@@ -224,7 +226,7 @@ public final class ClassGenerator
 		String desc = name + ReflectUtils.getDescWithoutMethodName(m);
 		addMethod(':' + desc);
 		if( mCopyMethods == null )
-			mCopyMethods = new ConcurrentHashMap<String, Method>(8);
+			mCopyMethods = new ConcurrentHashMap<>(8);
 		mCopyMethods.put(desc, m);
 		return this;
 	}
@@ -232,7 +234,7 @@ public final class ClassGenerator
 	public ClassGenerator addConstructor(String code)
 	{
 		if( mConstructors == null )
-			mConstructors = new LinkedList<String>();
+			mConstructors = new LinkedList<>();
 		mConstructors.add(code);
 		return this;
 	}
@@ -247,24 +249,26 @@ public final class ClassGenerator
 		StringBuilder sb = new StringBuilder();
 		sb.append(modifier(mod)).append(' ').append(SIMPLE_NAME_TAG);
 		sb.append('(');
-		for(int i=0;i<pts.length;i++)
-		{
-			if( i > 0 )
-				sb.append(',');
-			sb.append(ReflectUtils.getName(pts[i]));
-			sb.append(" arg").append(i);
-		}
+		getPtsName(sb, pts);
+//		for(int i=0;i<pts.length;i++)
+//		{
+//			if( i > 0 )
+//				sb.append(',');
+//			sb.append(ReflectUtils.getName(pts[i]));
+//			sb.append(" arg").append(i);
+//		}
 		sb.append(')');
-		if( ets != null && ets.length > 0 )
-		{
-			sb.append(" throws ");
-			for(int i=0;i<ets.length;i++)
-			{
-				if( i > 0 )
-					sb.append(',');
-				sb.append(ReflectUtils.getName(ets[i]));
-			}
-		}
+		getEtsName(sb, ets);
+//		if( ets != null && ets.length > 0 )
+//		{
+//			sb.append(" throws ");
+//			for(int i=0;i<ets.length;i++)
+//			{
+//				if( i > 0 )
+//					sb.append(',');
+//				sb.append(ReflectUtils.getName(ets[i]));
+//			}
+//		}
 		sb.append('{').append(body).append('}');
 		return addConstructor(sb.toString());
 	}
@@ -274,7 +278,7 @@ public final class ClassGenerator
 		String desc = ReflectUtils.getDesc(c);
 		addConstructor(":"+desc);
 		if( mCopyConstructors == null )
-			mCopyConstructors = new ConcurrentHashMap<String, Constructor<?>>(4);
+			mCopyConstructors = new ConcurrentHashMap<>(4);
 		mCopyConstructors.put(desc, c);
 		return this;
 	}
@@ -293,8 +297,7 @@ public final class ClassGenerator
 		return toClass(getClass().getClassLoader(), getClass().getProtectionDomain());
 	}
 
-	public Class<?> toClass(ClassLoader loader, ProtectionDomain pd)
-	{
+	public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) throws RuntimeException {
 		if( mCtc != null )
 			mCtc.detach();
 		long id = CLASS_NAME_COUNTER.getAndIncrement();
@@ -340,17 +343,7 @@ public final class ClassGenerator
 				}
 			}
 			return mCtc.toClass(loader, pd);
-		}
-		catch(RuntimeException e)
-		{
-			throw e;
-		}
-		catch(NotFoundException e)
-		{
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		catch(CannotCompileException e)
-		{
+		} catch(NotFoundException | CannotCompileException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
@@ -387,5 +380,26 @@ public final class ClassGenerator
 		if( Modifier.isProtected(mod) ) return "protected";
 		if( Modifier.isPrivate(mod) ) return "private";
 		return "";
+	}
+
+	private static void getPtsName(StringBuilder sb, Class<?>[] pts) {
+		for(int i=0;i<pts.length;i++) {
+			if( i > 0 )
+				sb.append(',');
+			sb.append(ReflectUtils.getName(pts[i]));
+			sb.append(" arg").append(i);
+		}
+	}
+
+	private  static void getEtsName(StringBuilder sb, Class<?>[] ets) {
+		if( ets != null && ets.length > 0 ) {
+			sb.append(" throws ");
+			for(int i=0;i<ets.length;i++)
+			{
+				if( i > 0 )
+					sb.append(',');
+				sb.append(ReflectUtils.getName(ets[i]));
+			}
+		}
 	}
 }

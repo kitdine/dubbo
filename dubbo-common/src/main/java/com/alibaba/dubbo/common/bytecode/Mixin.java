@@ -125,47 +125,46 @@ public abstract class Mixin
 			ccp.addConstructor(Modifier.PUBLIC, new Class<?>[]{ Object[].class }, code.toString());
 
 			// impl methods.
-			Set<String> worked = new HashSet<String>();
-			for(int i=0;i<ics.length;i++)
-			{
-				if( !Modifier.isPublic(ics[i].getModifiers()) )
-				{
-					String npkg = ics[i].getPackage().getName();
-					if( pkg == null )
-					{
+			Set<String> worked = new HashSet<>();
+			for (Class<?> ic : ics) {
+				if (!Modifier.isPublic(ic.getModifiers())) {
+					String npkg = ic.getPackage().getName();
+					if (pkg == null) {
 						pkg = npkg;
-					}
-					else
-					{
-						if( !pkg.equals(npkg)  )
+					} else {
+						if (!pkg.equals(npkg)) {
 							throw new IllegalArgumentException("non-public delegate class from different packages");
+						}
 					}
 				}
 
-				ccp.addInterface(ics[i]);
+				ccp.addInterface(ic);
 
-				for( Method method : ics[i].getMethods() )
-				{
-					if( "java.lang.Object".equals(method.getDeclaringClass().getName()) )
+				for (Method method : ic.getMethods()) {
+					if ("java.lang.Object".equals(method.getDeclaringClass().getName())) {
 						continue;
+					}
 
 					String desc = ReflectUtils.getDesc(method);
-					if( worked.contains(desc) )
+					if (worked.contains(desc)) {
 						continue;
+					}
 					worked.add(desc);
 
 					int ix = findMethod(dcs, desc);
-					if( ix < 0 )
+					if (ix < 0) {
 						throw new RuntimeException("Missing method [" + desc + "] implement.");
+					}
 
 					Class<?> rt = method.getReturnType();
 					String mn = method.getName();
-					if( Void.TYPE.equals(rt) )
+					if (Void.TYPE.equals(rt)) {
 						ccp.addMethod(mn, method.getModifiers(), rt, method.getParameterTypes(), method.getExceptionTypes(),
-								"d" + ix + "." + mn + "($$);");
-					else
+							"d" + ix + "." + mn + "($$);");
+					} else {
 						ccp.addMethod(mn, method.getModifiers(), rt, method.getParameterTypes(), method.getExceptionTypes(),
-								"return ($r)d" + ix + "." + mn + "($$);");
+							"return ($r)d" + ix + "." + mn + "($$);");
+					}
 				}
 			}
 
@@ -234,8 +233,10 @@ public abstract class Mixin
 
 	private static void assertInterfaceArray(Class<?>[] ics)
 	{
-		for(int i=0;i<ics.length;i++)
-			if( !ics[i].isInterface() )
-				throw new RuntimeException("Class " + ics[i].getName() + " is not a interface.");
+		for (Class<?> ic : ics) {
+			if (!ic.isInterface()) {
+				throw new RuntimeException("Class " + ic.getName() + " is not a interface.");
+			}
+		}
 	}
 }

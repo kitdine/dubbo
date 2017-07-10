@@ -41,7 +41,7 @@ public abstract class Wrapper
 {
 	private static AtomicLong WRAPPER_CLASS_COUNTER = new AtomicLong(0);
 
-	private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
+	private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<>(); //class wrapper map
 
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -195,7 +195,7 @@ public abstract class Wrapper
 	 * 
 	 * @param instance instance.
 	 * @param mn method name.
-	 * @param types 
+	 * @param types types
 	 * @param args argument array.
 	 * @return return value.
 	 */
@@ -217,10 +217,10 @@ public abstract class Wrapper
 		c2.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
 		c3.append(name).append(" w; try{ w = ((").append(name).append(")$1); }catch(Throwable e){ throw new IllegalArgumentException(e); }");
 
-		Map<String, Class<?>> pts = new HashMap<String, Class<?>>(); // <property name, property types>
-		Map<String, Method> ms = new LinkedHashMap<String, Method>(); // <method desc, Method instance>
-		List<String> mns = new ArrayList<String>(); // method names.
-		List<String> dmns = new ArrayList<String>(); // declaring method names.
+		Map<String, Class<?>> pts = new HashMap<>(); // <property name, property types>
+		Map<String, Method> ms = new LinkedHashMap<>(); // <method desc, Method instance>
+		List<String> mns = new ArrayList<>(); // method names.
+		List<String> dmns = new ArrayList<>(); // declaring method names.
 		
 		// get all public field.
 		for( Field f : c.getFields() )
@@ -287,14 +287,14 @@ public abstract class Wrapper
 	        c3.append(" }");
         }
 		
-		c3.append(" throw new " + NoSuchMethodException.class.getName() + "(\"Not found method \\\"\"+$2+\"\\\" in class " + c.getName() + ".\"); }");
+		c3.append(" throw new ").append(NoSuchMethodException.class.getName()).append("(\"Not found method \\\"\"+$2+\"\\\" in class ").append(c.getName()).append(".\"); }");
 		
 		// deal with get/set method.
 		Matcher matcher;
 		for( Map.Entry<String,Method> entry : ms.entrySet() )
 		{
 			String md = entry.getKey();
-			Method method = (Method)entry.getValue();
+			Method method = entry.getValue();
 			if( ( matcher = ReflectUtils.GETTER_METHOD_DESC_PATTERN.matcher(md) ).matches() )
 			{
 				String pn = propertyName(matcher.group(1));
@@ -315,8 +315,10 @@ public abstract class Wrapper
 				pts.put(pn, pt);
 			}
 		}
-		c1.append(" throw new " + NoSuchPropertyException.class.getName() + "(\"Not found property \\\"\"+$2+\"\\\" filed or setter method in class " + c.getName() + ".\"); }");
-		c2.append(" throw new " + NoSuchPropertyException.class.getName() + "(\"Not found property \\\"\"+$2+\"\\\" filed or setter method in class " + c.getName() + ".\"); }");
+		c1.append(" throw new ").append(NoSuchPropertyException.class.getName()).append("(\"Not found property \\\"\"+$2+\"\\\" filed or setter method in class ").append(c.getName())
+			.append(".\"); }");
+		c2.append(" throw new ").append(NoSuchPropertyException.class.getName()).append("(\"Not found property \\\"\"+$2+\"\\\" filed or setter method in class ").append(c.getName())
+			.append(".\"); }");
 
 		// make class
 		long id = WRAPPER_CLASS_COUNTER.getAndIncrement();
