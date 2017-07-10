@@ -120,7 +120,7 @@
         <log4j2_version>2.8.2</log4j2_version>
 		<!-- Test libs -->
 		<junit_version>4.12</junit_version>
-		<easymock_version>3.4</easymock_version>
+		<easymock_version>3.2</easymock_version>
 		<jmockit_version>1.33</jmockit_version>
 		<!-- Build args -->
 		<argline>-server -Xms64m -Xmx256m -XX:PermSize=64m -XX:MaxPermSize=128m -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true</argline>
@@ -397,8 +397,8 @@
 			<artifactId>easymockclassextension</artifactId>
 		</dependency>
 			<dependency>
-			<groupId>com.googlecode.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
+				<groupId>org.jmockit</groupId>
+				<artifactId>jmockit</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -588,4 +588,14 @@
 			<timezone>+8</timezone>
 		</developer>
 	</developers>
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>
