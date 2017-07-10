@@ -65,7 +65,7 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
 
     private int type;
 
-    private Map<Object, Object> properties = new LinkedHashMap<Object, Object>();
+    private Map<Object, Object> properties = new LinkedHashMap<>();
 
     public JavaBeanDescriptor() {}
 
@@ -73,8 +73,8 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         notEmpty(className, "class name is empty");
         if (!isValidType(type)) {
             throw new IllegalArgumentException(
-                new StringBuilder(16).append("type [ ")
-                    .append(type).append(" ] is unsupported").toString());
+                "type [ " +
+                    type + " ] is unsupported");
         }
 
         this.className = className;
@@ -128,8 +128,7 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
     public Object setProperty(Object propertyName, Object propertyValue) {
         notNull(propertyName, "Property name is null");
 
-        Object oldValue = properties.put(propertyName, propertyValue);
-        return oldValue;
+        return properties.put(propertyName, propertyValue);
     }
 
     public String setEnumNameProperty(String name) {
@@ -180,8 +179,7 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
 
     public Object getProperty(Object propertyName) {
         notNull(propertyName, "Property name is null");
-        Object propertyValue = properties.get(propertyName);
-        return propertyValue;
+        return properties.get(propertyName);
     }
 
     public boolean containsProperty(Object propertyName) {
@@ -213,7 +211,16 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         }
     }
 
-    private boolean isEmpty(String string) {
-        return string == null || "".equals(string.trim());
+    private boolean isEmpty(final CharSequence cs) {
+        int strLen;
+        if (cs == null || (strLen = cs.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
