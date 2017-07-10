@@ -24,6 +24,7 @@ import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.logger.jcl.JclLoggerAdapter;
 import com.alibaba.dubbo.common.logger.jdk.JdkLoggerAdapter;
 import com.alibaba.dubbo.common.logger.log4j.Log4jLoggerAdapter;
+import com.alibaba.dubbo.common.logger.log4j2.Log4j2LoggerAdapter;
 import com.alibaba.dubbo.common.logger.slf4j.Slf4jLoggerAdapter;
 import com.alibaba.dubbo.common.logger.support.FailsafeLogger;
 
@@ -44,7 +45,9 @@ public class LoggerFactory {
 	// 查找常用的日志框架
 	static {
 	    String logger = System.getProperty("dubbo.application.logger");
-	    if ("slf4j".equals(logger)) {
+	    if("log4j2".equals(logger)) {
+			setLoggerAdapter(new Log4j2LoggerAdapter());
+		}else if ("slf4j".equals(logger)) {
     		setLoggerAdapter(new Slf4jLoggerAdapter());
     	} else if ("jcl".equals(logger)) {
     		setLoggerAdapter(new JclLoggerAdapter());
@@ -53,19 +56,23 @@ public class LoggerFactory {
     	} else if ("jdk".equals(logger)) {
     		setLoggerAdapter(new JdkLoggerAdapter());
     	} else {
-    		try {
-    			setLoggerAdapter(new Log4jLoggerAdapter());
-            } catch (Throwable e1) {
-                try {
-                	setLoggerAdapter(new Slf4jLoggerAdapter());
-                } catch (Throwable e2) {
-                    try {
-                    	setLoggerAdapter(new JclLoggerAdapter());
-                    } catch (Throwable e3) {
-                        setLoggerAdapter(new JdkLoggerAdapter());
-                    }
-                }
-            }
+	    	try {
+				setLoggerAdapter(new Log4j2LoggerAdapter());
+			} catch (Throwable e) {
+				try {
+					setLoggerAdapter(new Log4jLoggerAdapter());
+				} catch (Throwable e1) {
+					try {
+						setLoggerAdapter(new Slf4jLoggerAdapter());
+					} catch (Throwable e2) {
+						try {
+							setLoggerAdapter(new JclLoggerAdapter());
+						} catch (Throwable e3) {
+							setLoggerAdapter(new JdkLoggerAdapter());
+						}
+					}
+				}
+			}
     	}
 	}
 	
