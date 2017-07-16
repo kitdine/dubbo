@@ -59,7 +59,7 @@ public class JdkCompiler extends AbstractCompiler {
 
     private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
-    private final DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
+    private final DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
     
     private final ClassLoaderImpl classLoader;
     
@@ -68,7 +68,7 @@ public class JdkCompiler extends AbstractCompiler {
     private volatile List<String> options;
 
     public JdkCompiler(){
-        options = new ArrayList<String>();
+        options = new ArrayList<>();
         options.add("-target");
         options.add("1.6");
         StandardJavaFileManager manager = compiler.getStandardFileManager(diagnosticCollector, null, null);
@@ -86,11 +86,7 @@ public class JdkCompiler extends AbstractCompiler {
                 throw new IllegalStateException(e.getMessage(), e);
             }
         }
-        classLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoaderImpl>() {
-            public ClassLoaderImpl run() {
-                return new ClassLoaderImpl(loader);
-            }
-        });
+        classLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoaderImpl>) () -> new ClassLoaderImpl(loader));
         javaFileManager = new JavaFileManagerImpl(manager, classLoader);
     }
     
@@ -103,8 +99,8 @@ public class JdkCompiler extends AbstractCompiler {
         javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, 
                                         className + ClassUtils.JAVA_EXTENSION, javaFileObject);
         Boolean result = compiler.getTask(null, javaFileManager, diagnosticCollector, options, 
-                                          null, Arrays.asList(new JavaFileObject[]{javaFileObject})).call();
-        if (result == null || ! result.booleanValue()) {
+                                          null, Collections.singletonList(javaFileObject)).call();
+        if (result == null || !result) {
             throw new IllegalStateException("Compilation failed. class: " + name + ", diagnostics: " + diagnosticCollector);
         }
         return classLoader.loadClass(name);
@@ -112,7 +108,7 @@ public class JdkCompiler extends AbstractCompiler {
     
     private final class ClassLoaderImpl extends ClassLoader {
         
-        private final Map<String, JavaFileObject> classes = new HashMap<String, JavaFileObject>();
+        private final Map<String, JavaFileObject> classes = new HashMap<>();
 
         ClassLoaderImpl(final ClassLoader parentClassLoader) {
             super(parentClassLoader);
