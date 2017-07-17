@@ -26,6 +26,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,29 +68,23 @@ public abstract class Builder<T> implements GenericDataFlags
 
 	private static final String BUILDER_CLASS_NAME = Builder.class.getName();
 
-	private static final Map<Class<?>, Builder<?>> BuilderMap = new ConcurrentHashMap<Class<?>, Builder<?>>();
-	private static final Map<Class<?>, Builder<?>> nonSerializableBuilderMap = new ConcurrentHashMap<Class<?>, Builder<?>>();
+	private static final Map<Class<?>, Builder<?>> BuilderMap = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, Builder<?>> nonSerializableBuilderMap = new ConcurrentHashMap<>();
 
 	private static final String FIELD_CONFIG_SUFFIX = ".fc";
 
 	private static final int MAX_FIELD_CONFIG_FILE_SIZE = 16 * 1024;
 
-	private static final Comparator<String> FNC = new Comparator<String>(){
-		public int compare(String n1, String n2){ return compareFieldName(n1, n2); }
-	};
+	private static final Comparator<String> FNC = Builder::compareFieldName;
 
-	private static final Comparator<Field> FC = new Comparator<Field>(){
-		public int compare(Field f1, Field f2){ return compareFieldName(f1.getName(), f2.getName()); }
-	};
+	private static final Comparator<Field> FC = (f1, f2) -> compareFieldName(f1.getName(), f2.getName());
 
-	private static final Comparator<Constructor> CC = new Comparator<Constructor>(){
-		public int compare(Constructor o1, Constructor o2){ return o1.getParameterTypes().length - o2.getParameterTypes().length; }
-	};
+	private static final Comparator<Constructor> CC = Comparator.comparingInt(o -> o.getParameterTypes().length);
 
 	// class-descriptor mapper
-	private static final List<String> mDescList = new ArrayList<String>();
+	private static final List<String> mDescList = new ArrayList<>();
 
-	private static final Map<String, Integer> mDescMap = new ConcurrentHashMap<String, Integer>();
+	private static final Map<String, Integer> mDescMap = new ConcurrentHashMap<>();
 
 	public static ClassDescriptorMapper DEFAULT_CLASS_DESCRIPTOR_MAPPER = new ClassDescriptorMapper(){
 		public String getDescriptor(int index)
@@ -102,7 +97,7 @@ public abstract class Builder<T> implements GenericDataFlags
 		public int getDescriptorIndex(String desc)
 		{
 			Integer ret = mDescMap.get(desc);
-			return ret == null ? -1 : ret.intValue();
+			return ret == null ? -1 : ret;
 		}
 	};
 
@@ -348,13 +343,11 @@ public abstract class Builder<T> implements GenericDataFlags
 					String[] lines = IOUtils.readLines(is);
 					if( lines != null && lines.length > 0 )
 					{
-						List<String> list = new ArrayList<String>();
-						for(int i=0;i<lines.length;i++)
-						{
-							fns = lines[i].split(",");
+						List<String> list = new ArrayList<>();
+						for (String line : lines) {
+							fns = line.split(",");
 							Arrays.sort(fns, FNC);
-							for(int j=0;j<fns.length;j++)
-								list.add(fns[j]);
+							Collections.addAll(list, fns);
 						}
 						fns = list.toArray(new String[0]);
 					}
@@ -406,7 +399,7 @@ public abstract class Builder<T> implements GenericDataFlags
 		else
 		{
 			Class<?> t = c;
-			List<Field> fl = new ArrayList<Field>();
+			List<Field> fl = new ArrayList<>();
 			do
 			{
 				fs = t.getDeclaredFields();
@@ -491,7 +484,7 @@ public abstract class Builder<T> implements GenericDataFlags
 
 		// get bean-style property metadata.
 		Map<String, PropertyMetadata> pms = propertyMetadatas(c);
-		List<Builder<?>> builders = new ArrayList<Builder<?>>(fs.length);
+		List<Builder<?>> builders = new ArrayList<>(fs.length);
 		String fn, ftn; // field name, field type name.
 		Class<?> ft; // field type.
 		boolean da; // direct access.
@@ -502,7 +495,7 @@ public abstract class Builder<T> implements GenericDataFlags
 			fn = f.getName();
 			ft = f.getType();
 			ftn = ReflectUtils.getName(ft);
-			da = isp && ( f.getDeclaringClass() == c ) && ( Modifier.isPrivate(f.getModifiers()) == false );
+			da = isp && ( f.getDeclaringClass() == c ) && (!Modifier.isPrivate(f.getModifiers()));
 			if( da )
 			{
 				pm = null;
@@ -798,8 +791,8 @@ public abstract class Builder<T> implements GenericDataFlags
 
 	private static Map<String, PropertyMetadata> propertyMetadatas(Class<?> c)
 	{
-		Map<String, Method> mm = new HashMap<String, Method>(); // method map.
-		Map<String, PropertyMetadata> ret = new HashMap<String, PropertyMetadata>(); // property metadata map.
+		Map<String, Method> mm = new HashMap<>(); // method map.
+		Map<String, PropertyMetadata> ret = new HashMap<>(); // property metadata map.
 
 		// All public method.
 		for( Method m : c.getMethods() )
@@ -1020,9 +1013,9 @@ public abstract class Builder<T> implements GenericDataFlags
 		}
 		@Override
 		public void writeTo(Serializable obj, GenericObjectOutput out) throws IOException
-		{
-			if( obj == null )
-			{
+				{
+					if( obj == null )
+					{
 				out.write0(OBJECT_NULL);
 			}
 			else
@@ -1104,7 +1097,7 @@ public abstract class Builder<T> implements GenericDataFlags
 			{
 				if( obj == null )
 					out.write0(VARINT_N1);
-				else if( obj.booleanValue() )
+				else if(obj)
 					out.write0(VARINT_1);
 				else
 					out.write0(VARINT_0);
@@ -1135,7 +1128,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				else
 				{
 					out.write0(OBJECT_VALUE);
-					out.writeByte(obj.byteValue());
+					out.writeByte(obj);
 				}
 			}
 			@Override
@@ -1147,7 +1140,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return Byte.valueOf(in.readByte());
+				return in.readByte();
 			}
 		});
 		register(Character.class, new Builder<Character>(){
@@ -1175,7 +1168,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return Character.valueOf((char)in.readShort());
+				return (char) in.readShort();
 			}
 		});
 		register(Short.class, new Builder<Short>(){
@@ -1191,7 +1184,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				else
 				{
 					out.write0(OBJECT_VALUE);
-					out.writeShort(obj.shortValue());
+					out.writeShort(obj);
 				}
 			}
 			@Override
@@ -1203,7 +1196,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return Short.valueOf(in.readShort());
+				return in.readShort();
 			}
 		});
 		register(Integer.class, new Builder<Integer>(){
@@ -1219,7 +1212,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				else
 				{
 					out.write0(OBJECT_VALUE);
-					out.writeInt(obj.intValue());
+					out.writeInt(obj);
 				}
 			}
 			@Override
@@ -1231,7 +1224,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return Integer.valueOf(in.readInt());
+				return in.readInt();
 			}
 		});
 		register(Long.class, new Builder<Long>(){
@@ -1247,7 +1240,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				else
 				{
 					out.write0(OBJECT_VALUE);
-					out.writeLong(obj.longValue());
+					out.writeLong(obj);
 				}
 			}
 			@Override
@@ -1259,7 +1252,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return Long.valueOf(in.readLong());
+				return in.readLong();
 			}
 		});
 		register(Float.class, new Builder<Float>(){
@@ -1275,7 +1268,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				else
 				{
 					out.write0(OBJECT_VALUE);
-					out.writeFloat(obj.floatValue());
+					out.writeFloat(obj);
 				}
 			}
 			@Override
@@ -1287,7 +1280,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return new Float(in.readFloat());
+				return in.readFloat();
 			}
 		});
 		register(Double.class, new Builder<Double>(){
@@ -1303,7 +1296,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				else
 				{
 					out.write0(OBJECT_VALUE);
-					out.writeDouble(obj.doubleValue());
+					out.writeDouble(obj);
 				}
 			}
 			@Override
@@ -1315,7 +1308,7 @@ public abstract class Builder<T> implements GenericDataFlags
 				if( b != OBJECT_VALUE )
 					throw new IOException("Input format error, expect OBJECT_NULL|OBJECT_VALUE, get " + b + ".");
 
-				return new Double(in.readDouble());
+				return in.readDouble();
 			}
 		});
 		register(String.class, new Builder<String>(){

@@ -33,7 +33,7 @@ public class GenericObjectOutput extends GenericDataOutput implements ObjectOutp
 {
 	private ClassDescriptorMapper mMapper;
 
-	private Map<Object, Integer> mRefs = new ConcurrentHashMap<Object, Integer>();
+	private Map<Object, Integer> mRefs = new ConcurrentHashMap<>();
 	
 	private final boolean isAllowNonSerializable;
 
@@ -109,6 +109,6 @@ public class GenericObjectOutput extends GenericDataOutput implements ObjectOutp
 		Integer ref = mRefs.get(obj);
 		if( ref == null )
 			return -1;
-		return ref.intValue();
+		return ref;
 	}
 }

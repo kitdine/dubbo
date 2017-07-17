@@ -321,7 +321,7 @@ public class GenericDataInput implements DataInput, GenericDataFlags
 					( ( (long)b4 & 0xff ) << 24 ) |
 					( ( (long)b5 & 0xff ) << 32 );
 				if( b5 < 0 )
-					return ret | 0xffffff0000000000l;
+					return ret | 0xffffff0000000000L;
 				return ret;
 			}
 			case VARINT48:
@@ -334,7 +334,7 @@ public class GenericDataInput implements DataInput, GenericDataFlags
 					( ( (long)b5 & 0xff ) << 32 ) |
 					( ( (long)b6 & 0xff ) << 40 );
 				if( b6 < 0 )
-					return ret | 0xffff000000000000l;
+					return ret | 0xffff000000000000L;
 				return ret;
 			}
 			case VARINT56:
@@ -348,7 +348,7 @@ public class GenericDataInput implements DataInput, GenericDataFlags
 					( ( (long)b6 & 0xff ) << 40 ) |
 					( ( (long)b7 & 0xff ) << 48 );
 				if( b7 < 0 )
-					return ret | 0xff00000000000000l;
+					return ret | 0xff00000000000000L;
 				return ret;
 			}
 			case VARINT64:
