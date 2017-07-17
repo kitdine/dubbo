@@ -422,6 +422,15 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven_compiler_plugin_version}</version>
+				<configuration>
+					<target>${java_target_version}</target>
+					<source>${java_source_version}</source>
+					<encoding>${file_encoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
