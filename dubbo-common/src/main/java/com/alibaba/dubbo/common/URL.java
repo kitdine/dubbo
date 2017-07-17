@@ -161,9 +161,9 @@ public final class URL implements Serializable {
 		}
 		this.path = path;
 		if (parameters == null) {
-		    parameters = new HashMap<String, String>();
+		    parameters = new HashMap<>();
 		} else {
-		    parameters = new HashMap<String, String>(parameters);
+		    parameters = new HashMap<>(parameters);
 		}
 		this.parameters = Collections.unmodifiableMap(parameters);
 	}
@@ -189,7 +189,7 @@ public final class URL implements Serializable {
         int i = url.indexOf("?"); // seperator between body and parameters 
         if (i >= 0) {
             String[] parts = url.substring(i + 1).split("\\&");
-            parameters = new HashMap<String, String>();
+            parameters = new HashMap<>();
             for (String part : parts) {
                 part = part.trim();
                 if (part.length() > 0) {
@@ -315,7 +315,7 @@ public final class URL implements Serializable {
 	}
 	
 	public List<URL> getBackupUrls() {
-		List<URL> urls = new ArrayList<URL>();
+		List<URL> urls = new ArrayList<>();
 		urls.add(this);
         String[] backups = getParameter(Constants.BACKUP_KEY, new String[0]);
         if (backups != null && backups.length > 0) {
@@ -425,14 +425,14 @@ public final class URL implements Serializable {
     
     private Map<String, Number> getNumbers() {
         if (numbers == null) { // 允许并发重复创建
-            numbers = new ConcurrentHashMap<String, Number>();
+            numbers = new ConcurrentHashMap<>();
         }
         return numbers;
     }
 
     private Map<String, URL> getUrls() {
         if (urls == null) { // 允许并发重复创建
-            urls = new ConcurrentHashMap<String, URL>();
+            urls = new ConcurrentHashMap<>();
         }
         return urls;
     }
@@ -913,7 +913,7 @@ public final class URL implements Serializable {
             return this;
         }
 
-        Map<String, String> map = new HashMap<String, String>(getParameters());
+        Map<String, String> map = new HashMap<>(getParameters());
         map.put(key, value);
         return new URL(protocol, username, password, host, port, path, map);
     }
@@ -926,7 +926,7 @@ public final class URL implements Serializable {
         if (hasParameter(key)) {
             return this;
         }
-        Map<String, String> map = new HashMap<String, String>(getParameters());
+        Map<String, String> map = new HashMap<>(getParameters());
         map.put(key, value);
         return new URL(protocol, username, password, host, port, path, map);
     }
@@ -953,7 +953,7 @@ public final class URL implements Serializable {
         // 如果没有修改，直接返回。
         if(hasAndEqual) return this;
 
-        Map<String, String> map = new HashMap<String, String>(getParameters());
+        Map<String, String> map = new HashMap<>(getParameters());
         map.putAll(parameters);
         return new URL(protocol, username, password, host, port, path, map);
     }
@@ -962,7 +962,7 @@ public final class URL implements Serializable {
 		if (parameters == null || parameters.size() == 0) {
 			return this;
 		}
-		Map<String, String> map = new HashMap<String, String>(parameters);
+		Map<String, String> map = new HashMap<>(parameters);
 		map.putAll(getParameters());
 		return new URL(protocol, username, password, host, port, path, map);
 	}
@@ -974,7 +974,7 @@ public final class URL implements Serializable {
         if (pairs.length % 2 != 0) {
             throw new IllegalArgumentException("Map pairs can not be odd number.");
         }
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         int len = pairs.length / 2;
         for (int i = 0; i < len; i ++) {
             map.put(pairs[2 * i], pairs[2 * i + 1]);
@@ -1007,7 +1007,7 @@ public final class URL implements Serializable {
 	    if (keys == null || keys.length == 0) {
             return this;
         }
-        Map<String, String> map = new HashMap<String, String>(getParameters());
+        Map<String, String> map = new HashMap<>(getParameters());
         for (String key : keys) {
             map.remove(key);
         }
@@ -1018,7 +1018,7 @@ public final class URL implements Serializable {
 	}
 	
 	public URL clearParameters() {
-        return new URL(protocol, username, password, host, port, path, new HashMap<String, String>());
+        return new URL(protocol, username, password, host, port, path, new HashMap<>());
     }
 	
 	public String getRawParameter(String key) {
@@ -1038,7 +1038,7 @@ public final class URL implements Serializable {
 	}
 
     public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<String, String>(parameters);
+        Map<String, String> map = new HashMap<>(parameters);
         if (protocol != null)
             map.put("protocol", protocol);
         if (username != null)
@@ -1104,7 +1104,7 @@ public final class URL implements Serializable {
 	    if (getParameters() !=null && getParameters().size() > 0) {
             List<String> includes = (parameters == null || parameters.length == 0 ? null : Arrays.asList(parameters));
             boolean first = true;
-            for (Map.Entry<String, String> entry : new TreeMap<String, String>(getParameters()).entrySet()) {
+            for (Map.Entry<String, String> entry : new TreeMap<>(getParameters()).entrySet()) {
                 if (entry.getKey() != null && entry.getKey().length() > 0
                         && (includes == null || includes.contains(entry.getKey()))) {
                     if (first) {

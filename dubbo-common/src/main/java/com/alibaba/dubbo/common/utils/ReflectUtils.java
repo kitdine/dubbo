@@ -425,8 +425,9 @@ public final class ReflectUtils {
 	{
 		StringBuilder ret = new StringBuilder("(");
 		Class<?>[] parameterTypes = c.getParameterTypes();
-		for(int i=0;i<parameterTypes.length;i++)
-			ret.append(getDesc(parameterTypes[i]));
+		for (Class<?> parameterType : parameterTypes) {
+			ret.append(getDesc(parameterType));
+		}
 		ret.append(')').append('V');
 		return ret.toString();
 	}
@@ -443,8 +444,9 @@ public final class ReflectUtils {
 		StringBuilder ret = new StringBuilder();
 		ret.append('(');
 		Class<?>[] parameterTypes = m.getParameterTypes();
-		for(int i=0;i<parameterTypes.length;i++)
-			ret.append(getDesc(parameterTypes[i]));
+		for (Class<?> parameterType : parameterTypes) {
+			ret.append(getDesc(parameterType));
+		}
 		ret.append(')').append(getDesc(m.getReturnType()));
 		return ret.toString();
 	}
@@ -499,8 +501,9 @@ public final class ReflectUtils {
 	{
 		StringBuilder ret = new StringBuilder(m.getName()).append('(');
 		CtClass[] parameterTypes = m.getParameterTypes();
-		for(int i=0;i<parameterTypes.length;i++)
-			ret.append(getDesc(parameterTypes[i]));
+		for (CtClass parameterType : parameterTypes) {
+			ret.append(getDesc(parameterType));
+		}
 		ret.append(')').append(getDesc(m.getReturnType()));
 		return ret.toString();
 	}
@@ -516,8 +519,9 @@ public final class ReflectUtils {
 	{
 		StringBuilder ret = new StringBuilder("(");
 		CtClass[] parameterTypes = c.getParameterTypes();
-		for(int i=0;i<parameterTypes.length;i++)
-			ret.append(getDesc(parameterTypes[i]));
+		for (CtClass parameterType : parameterTypes) {
+			ret.append(getDesc(parameterType));
+		}
 		ret.append(')').append('V');
 		return ret.toString();
 	}
@@ -534,8 +538,9 @@ public final class ReflectUtils {
 		StringBuilder ret = new StringBuilder();
 		ret.append('(');
 		CtClass[] parameterTypes = m.getParameterTypes();
-		for(int i=0;i<parameterTypes.length;i++)
-			ret.append(getDesc(parameterTypes[i]));
+		for (CtClass parameterType : parameterTypes) {
+			ret.append(getDesc(parameterType));
+		}
 		ret.append(')').append(getDesc(m.getReturnType()));
 		return ret.toString();
 	}
@@ -751,8 +756,7 @@ public final class ReflectUtils {
 	 */
 	public static Class<?>[] desc2classArray(String desc) throws ClassNotFoundException
 	{
-	    Class<?>[] ret = desc2classArray(ClassHelper.getClassLoader(), desc);
-		return ret;
+		return desc2classArray(ClassHelper.getClassLoader(), desc);
 	}
 
 	/**
@@ -768,7 +772,7 @@ public final class ReflectUtils {
 		if( desc.length() == 0 )
 			return EMPTY_CLASS_ARRAY;
 
-		List<Class<?>> cs = new ArrayList<Class<?>>();
+		List<Class<?>> cs = new ArrayList<>();
 		Matcher m = DESC_PATTERN.matcher(desc);
 		while(m.find())
 			cs.add(desc2class(cl, m.group()));
@@ -796,7 +800,7 @@ public final class ReflectUtils {
             return method;
         }
 	    if (parameterTypes == null) {
-            List<Method> finded = new ArrayList<Method>();
+            List<Method> finded = new ArrayList<>();
             for (Method m : clazz.getMethods()) {
                 if (m.getName().equals(methodName)) {
                     finded.add(m);
@@ -831,7 +835,7 @@ public final class ReflectUtils {
     public static Constructor<?> findConstructor(Class<?> clazz, Class<?> paramType) throws NoSuchMethodException {
     	Constructor<?> targetConstructor;
 		try {
-			targetConstructor = clazz.getConstructor(new Class<?>[] {paramType});
+			targetConstructor = clazz.getConstructor(paramType);
 		} catch (NoSuchMethodException e) {
 			targetConstructor = null;
 			Constructor<?>[] constructors = clazz.getConstructors();
@@ -874,7 +878,7 @@ public final class ReflectUtils {
     }
     
     public static Object getEmptyObject(Class<?> returnType) {
-        return getEmptyObject(returnType, new HashMap<Class<?>, Object>(), 0);
+        return getEmptyObject(returnType, new HashMap<>(), 0);
     }
     
     private static Object getEmptyObject(Class<?> returnType, Map<Class<?>, Object> emptyInstances, int level) {
@@ -901,11 +905,11 @@ public final class ReflectUtils {
         } else if (returnType.isArray()) {
             return Array.newInstance(returnType.getComponentType(), 0);
         } else if (returnType.isAssignableFrom(ArrayList.class)) {
-            return new ArrayList<Object>(0);
+            return new ArrayList<>(0);
         } else if (returnType.isAssignableFrom(HashSet.class)) {
-            return new HashSet<Object>(0);
+            return new HashSet<>(0);
         } else if (returnType.isAssignableFrom(HashMap.class)) {
-            return new HashMap<Object, Object>(0);
+            return new HashMap<>(0);
         } else if (String.class.equals(returnType)) {
             return "";
         } else if (! returnType.isInterface()) {

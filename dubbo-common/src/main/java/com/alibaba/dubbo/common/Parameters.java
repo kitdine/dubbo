@@ -42,7 +42,7 @@ public class Parameters {
         }
         
         public Parameters(Map<String, String> parameters){
-            this.parameters = Collections.unmodifiableMap(parameters != null ? new HashMap<String, String>(parameters) : new HashMap<String, String>(0));
+            this.parameters = Collections.unmodifiableMap(parameters != null ? new HashMap<>(parameters) : new HashMap<>(0));
         }
         
         private static Map<String, String> toMap(String... pairs) {
@@ -153,10 +153,7 @@ public class Parameters {
 
         public boolean getBooleanParameter(String key) {
             String value = getParameter(key);
-            if (value == null || value.length() == 0) {
-                return false;
-            }
-            return Boolean.parseBoolean(value);
+            return !(value == null || value.length() == 0) && Boolean.parseBoolean(value);
         }
 
         public boolean getBooleanParameter(String key, boolean defaultValue) {
@@ -224,10 +221,7 @@ public class Parameters {
 
         public boolean getMethodBooleanParameter(String method, String key) {
             String value = getMethodParameter(method, key);
-            if (value == null || value.length() == 0) {
-                return false;
-            }
-            return Boolean.parseBoolean(value);
+            return !(value == null || value.length() == 0) && Boolean.parseBoolean(value);
         }
 
         public boolean getMethodBooleanParameter(String method, String key, boolean defaultValue) {

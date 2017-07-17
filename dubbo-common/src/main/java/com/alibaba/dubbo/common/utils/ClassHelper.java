@@ -152,7 +152,7 @@ public class ClassHelper {
         // SHOULD sit in a package, so a length check is worthwhile.
         if (name != null && name.length() <= 8) {
             // Could be a primitive - likely.
-            result = (Class<?>) primitiveTypeNameMap.get(name);
+            result = primitiveTypeNameMap.get(name);
         }
         return result;
     }
@@ -166,13 +166,13 @@ public class ClassHelper {
      * Map with primitive type name as key and corresponding primitive type as
      * value, for example: "int" -> "int.class".
      */
-    private static final Map<String,Class<?>>    primitiveTypeNameMap    = new HashMap<String, Class<?>>(16);
+    private static final Map<String,Class<?>>    primitiveTypeNameMap    = new HashMap<>(16);
 
     /**
      * Map with primitive wrapper type as key and corresponding primitive type
      * as value, for example: Integer.class -> int.class.
      */
-    private static final Map<Class<?>,Class<?>>    primitiveWrapperTypeMap = new HashMap<Class<?>, Class<?>>(8);
+    private static final Map<Class<?>,Class<?>>    primitiveWrapperTypeMap = new HashMap<>(8);
 
     static {
         primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
@@ -184,13 +184,12 @@ public class ClassHelper {
         primitiveWrapperTypeMap.put(Long.class, long.class);
         primitiveWrapperTypeMap.put(Short.class, short.class);
 
-        Set<Class<?>> primitiveTypeNames = new HashSet<Class<?>>(16);
+        Set<Class<?>> primitiveTypeNames = new HashSet<>(16);
         primitiveTypeNames.addAll(primitiveWrapperTypeMap.values());
         primitiveTypeNames.addAll(Arrays
-                .asList(new Class<?>[] { boolean[].class, byte[].class, char[].class, double[].class,
-            float[].class, int[].class, long[].class, short[].class }));
-        for (Iterator<Class<?>> it = primitiveTypeNames.iterator(); it.hasNext();) {
-            Class<?> primitiveClass = (Class<?>) it.next();
+                .asList(boolean[].class, byte[].class, char[].class, double[].class,
+                    float[].class, int[].class, long[].class, short[].class));
+        for (Class<?> primitiveClass : primitiveTypeNames) {
             primitiveTypeNameMap.put(primitiveClass.getName(), primitiveClass);
         }
     }

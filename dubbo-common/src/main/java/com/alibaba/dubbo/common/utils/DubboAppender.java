@@ -25,7 +25,7 @@ public class DubboAppender extends ConsoleAppender {
 
     public static boolean   available = false;
 
-    public static List<Log> logList   = new ArrayList<Log>();
+    public static List<Log> logList   = new ArrayList<>();
 
     public static void doStart() {
         available = true;
@@ -41,7 +41,7 @@ public class DubboAppender extends ConsoleAppender {
 
     public void append(LoggingEvent event) {
         super.append(event);
-        if (available == true) {
+        if (available) {
             Log temp = parseLog(event);
             logList.add(temp);
         }

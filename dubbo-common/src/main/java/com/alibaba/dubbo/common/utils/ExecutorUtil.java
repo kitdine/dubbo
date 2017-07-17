@@ -34,7 +34,7 @@ public class ExecutorUtil {
     private static final Logger logger = LoggerFactory.getLogger(ExecutorUtil.class);
     private static final ThreadPoolExecutor shutdownExecutor = new ThreadPoolExecutor(0, 1,
             0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>(100),
+            new LinkedBlockingQueue<>(100),
             new NamedThreadFactory("Close-ExecutorService-Timer", true)); 
 
     public static boolean isShutdown(Executor executor) {
@@ -52,9 +52,7 @@ public class ExecutorUtil {
         final ExecutorService es = (ExecutorService) executor;
         try {
             es.shutdown(); // Disable new tasks from being submitted
-        } catch (SecurityException ex2) {
-            return ;
-        } catch (NullPointerException ex2) {
+        } catch (SecurityException | NullPointerException ex2) {
             return ;
         }
         try {
@@ -76,9 +74,7 @@ public class ExecutorUtil {
         final ExecutorService es = (ExecutorService) executor;
         try {
             es.shutdownNow();
-        } catch (SecurityException ex2) {
-            return ;
-        } catch (NullPointerException ex2) {
+        } catch (SecurityException | NullPointerException ex2) {
             return ;
         }
         try {
@@ -93,20 +89,18 @@ public class ExecutorUtil {
 
     private static void newThreadToCloseExecutor(final ExecutorService es) {
         if (!isShutdown(es)) {
-            shutdownExecutor.execute(new Runnable() {
-                public void run() {
-                    try {
-                        for (int i=0;i<1000;i++){
-                            es.shutdownNow();
-                            if (es.awaitTermination(10, TimeUnit.MILLISECONDS)){
-                                break;
-                            }
+            shutdownExecutor.execute(() -> {
+                try {
+                    for (int i=0;i<1000;i++){
+                        es.shutdownNow();
+                        if (es.awaitTermination(10, TimeUnit.MILLISECONDS)){
+                            break;
                         }
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    } catch (Throwable e) {
-                        logger.warn(e.getMessage(), e);
-                    } 
+                    }
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                } catch (Throwable e) {
+                    logger.warn(e.getMessage(), e);
                 }
             });
         }

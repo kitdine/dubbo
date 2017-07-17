@@ -50,9 +50,11 @@ public class LogUtil {
     public static int findName(String expectedLogName) {
         int count = 0;
         List<Log> logList = DubboAppender.logList;
-        for (int i = 0; i < logList.size(); i++) {
-            String logName = logList.get(i).getLogName();
-            if (logName.contains(expectedLogName)) count++;
+        for (com.alibaba.dubbo.common.utils.Log aLogList : logList) {
+            String logName = aLogList.getLogName();
+            if (logName.contains(expectedLogName)) {
+                count++;
+            }
         }
         return count;
     }
@@ -60,9 +62,11 @@ public class LogUtil {
     public static int findLevel(Level expectedLevel) {
         int count = 0;
         List<Log> logList = DubboAppender.logList;
-        for (int i = 0; i < logList.size(); i++) {
-            Level logLevel = logList.get(i).getLogLevel();
-            if (logLevel.equals(expectedLevel)) count++;
+        for (com.alibaba.dubbo.common.utils.Log aLogList : logList) {
+            Level logLevel = aLogList.getLogLevel();
+            if (logLevel.equals(expectedLevel)) {
+                count++;
+            }
         }
         return count;
     }
@@ -70,10 +74,10 @@ public class LogUtil {
     public static int findLevelWithThreadName(Level expectedLevel,String threadName) {
         int count = 0;
         List<Log> logList = DubboAppender.logList;
-        for (int i = 0; i < logList.size(); i++) {
-            Log log = logList.get(i);
-            if (log.getLogLevel().equals(expectedLevel) && log.getLogThread().equals(threadName)) 
+        for (com.alibaba.dubbo.common.utils.Log log : logList) {
+            if (log.getLogLevel().equals(expectedLevel) && log.getLogThread().equals(threadName)) {
                 count++;
+            }
         }
         return count;
     }
@@ -81,9 +85,11 @@ public class LogUtil {
     public static int findThread(String expectedThread) {
         int count = 0;
         List<Log> logList = DubboAppender.logList;
-        for (int i = 0; i < logList.size(); i++) {
-            String logThread = logList.get(i).getLogThread();
-            if (logThread.contains(expectedThread)) count++;
+        for (com.alibaba.dubbo.common.utils.Log aLogList : logList) {
+            String logThread = aLogList.getLogThread();
+            if (logThread.contains(expectedThread)) {
+                count++;
+            }
         }
         return count;
     }
@@ -91,9 +97,11 @@ public class LogUtil {
     public static int findMessage(String expectedMessage) {
         int count = 0;
         List<Log> logList = DubboAppender.logList;
-        for (int i = 0; i < logList.size(); i++) {
-            String logMessage = logList.get(i).getLogMessage();
-            if (logMessage.contains(expectedMessage)) count++;
+        for (com.alibaba.dubbo.common.utils.Log aLogList : logList) {
+            String logMessage = aLogList.getLogMessage();
+            if (logMessage.contains(expectedMessage)) {
+                count++;
+            }
         }
         return count;
     }
@@ -101,11 +109,13 @@ public class LogUtil {
     public static int findMessage(Level expectedLevel, String expectedMessage) {
         int count = 0;
         List<Log> logList = DubboAppender.logList;
-        for (int i = 0; i < logList.size(); i++) {
-            Level logLevel = logList.get(i).getLogLevel();
+        for (com.alibaba.dubbo.common.utils.Log aLogList : logList) {
+            Level logLevel = aLogList.getLogLevel();
             if (logLevel.equals(expectedLevel)) {
-                String logMessage = logList.get(i).getLogMessage();
-                if (logMessage.contains(expectedMessage)) count++;
+                String logMessage = aLogList.getLogMessage();
+                if (logMessage.contains(expectedMessage)) {
+                    count++;
+                }
             }
         }
         return count;
@@ -113,9 +123,8 @@ public class LogUtil {
 
     public static <T> void printList(List<T> list) {
         Log.info("PrintList:");
-        Iterator<T> it = list.iterator();
-        while (it.hasNext()) {
-            Log.info(it.next().toString());
+        for (T aList : list) {
+            Log.info(aList.toString());
         }
 
     }

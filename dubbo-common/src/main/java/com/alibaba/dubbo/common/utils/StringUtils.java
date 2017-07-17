@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.io.UnsafeStringWriter;
-import com.alibaba.dubbo.common.json.JSON;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
+import com.alibaba.fastjson.JSON;
 
 /**
  * StringUtils
@@ -441,13 +441,8 @@ public final class StringUtils {
             if (arg == null || ReflectUtils.isPrimitives(arg.getClass())) {
                 buf.append(arg);
             } else {
-                try {
-                    buf.append(JSON.json(arg));
-                } catch (IOException e) {
-                    logger.warn(e.getMessage(), e);
-                    buf.append(arg);
-                }
-            }
+				buf.append(JSON.toJSONString(arg));
+			}
         }
         return buf.toString();
 	}

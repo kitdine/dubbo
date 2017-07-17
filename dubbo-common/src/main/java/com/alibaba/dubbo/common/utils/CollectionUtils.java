@@ -33,32 +33,30 @@ public class CollectionUtils {
 		return list;
 	}
 	
-	private static final Comparator<String> SIMPLE_NAME_COMPARATOR = new Comparator<String>() {
-		public int compare(String s1, String s2) {
-			if (s1 == null && s2 == null) {
-				return 0;
-			}
-			if (s1 == null) {
-				return -1;
-			}
-			if (s2 == null) {
-				return 1;
-			}
-			int i1 = s1.lastIndexOf('.');
-			if (i1 >= 0) {
-				s1 = s1.substring(i1 + 1);
-			}
-			int i2 = s2.lastIndexOf('.');
-			if (i2 >= 0) {
-				s2 = s2.substring(i2 + 1);
-			}
-			return s1.compareToIgnoreCase(s2);
-		}
-	};
+	private static final Comparator<String> SIMPLE_NAME_COMPARATOR = (s1, s2) -> {
+        if (s1 == null && s2 == null) {
+            return 0;
+        }
+        if (s1 == null) {
+            return -1;
+        }
+        if (s2 == null) {
+            return 1;
+        }
+        int i1 = s1.lastIndexOf('.');
+        if (i1 >= 0) {
+            s1 = s1.substring(i1 + 1);
+        }
+        int i2 = s2.lastIndexOf('.');
+        if (i2 >= 0) {
+            s2 = s2.substring(i2 + 1);
+        }
+        return s1.compareToIgnoreCase(s2);
+    };
 	
 	public static List<String> sortSimpleName(List<String> list) {
 		if (list != null && list.size() > 0) {
-			Collections.sort(list, SIMPLE_NAME_COMPARATOR);
+			list.sort(SIMPLE_NAME_COMPARATOR);
 		}
 		return list;
 	}
@@ -67,7 +65,7 @@ public class CollectionUtils {
 		if (list == null) {
 			return null;
 		}
-		Map<String, Map<String, String>> result = new HashMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> result = new HashMap<>();
 		for (Map.Entry<String, List<String>> entry : list.entrySet()) {
 			result.put(entry.getKey(), split(entry.getValue(), separator));
 		}
@@ -78,7 +76,7 @@ public class CollectionUtils {
 		if (map == null) {
 			return null;
 		}
-		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		Map<String, List<String>> result = new HashMap<>();
 		for (Map.Entry<String, Map<String, String>> entry : map.entrySet()) {
 			result.put(entry.getKey(), join(entry.getValue(), separator));
 		}
@@ -89,8 +87,8 @@ public class CollectionUtils {
 		if (list == null) {
 			return null;
 		}
-		Map<String, String> map = new HashMap<String, String>();
-		if (list == null || list.size() == 0) {
+		Map<String, String> map = new HashMap<>();
+		if (list.size() == 0) {
 			return map;
 		}
 		for (String item : list) {
@@ -109,7 +107,7 @@ public class CollectionUtils {
 			return null;
 		}
 		List<String> list = new ArrayList<String>();
-		if (map == null || map.size() == 0) {
+		if (map.size() == 0) {
 			return list;
 		}
 		for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -160,14 +158,11 @@ public class CollectionUtils {
 		if (obj1 == null && obj2 == null) {
 			return true;
 		}
-		if (obj1 == null || obj2 == null) {
-			return false;
-		}
-		return obj1.equals(obj2);
+		return !(obj1 == null || obj2 == null) && obj1.equals(obj2);
 	}
 	
 	public static Map<String, String> toStringMap(String... pairs) {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         if (pairs.length > 0) {
             if (pairs.length % 2 != 0) {
                 throw new IllegalArgumentException("pairs must be even.");
