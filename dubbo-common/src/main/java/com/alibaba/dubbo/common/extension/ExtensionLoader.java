@@ -348,7 +348,7 @@ public class ExtensionLoader<T> {
     
 	public Set<String> getSupportedExtensions() {
         Map<String, Class<?>> clazzes = getExtensionClasses();
-        return Collections.unmodifiableSet(new TreeSet<String>(clazzes.keySet()));
+        return Collections.unmodifiableSet(new TreeSet<>(clazzes.keySet()));
     }
     
 	/**
@@ -643,7 +643,7 @@ public class ExtensionLoader<T> {
                                                     clazz.getConstructor(type);
                                                     Set<Class<?>> wrappers = cachedWrapperClasses;
                                                     if (wrappers == null) {
-                                                        cachedWrapperClasses = new ConcurrentHashSet<Class<?>>();
+                                                        cachedWrapperClasses = new ConcurrentHashSet<>();
                                                         wrappers = cachedWrapperClasses;
                                                     }
                                                     wrappers.add(clazz);
@@ -753,9 +753,9 @@ public class ExtensionLoader<T> {
         if(! hasAdaptiveAnnotation)
             throw new IllegalStateException("No adaptive method on extension " + type.getName() + ", refuse to create the adaptive class!");
         
-        codeBuidler.append("package " + type.getPackage().getName() + ";");
-        codeBuidler.append("\nimport " + ExtensionLoader.class.getName() + ";");
-        codeBuidler.append("\npublic class " + type.getSimpleName() + "$Adpative" + " implements " + type.getCanonicalName() + " {");
+        codeBuidler.append("package ").append(type.getPackage().getName()).append(";");
+        codeBuidler.append("\nimport ").append(ExtensionLoader.class.getName()).append(";");
+        codeBuidler.append("\npublic class ").append(type.getSimpleName()).append("$Adpative").append(" implements ").append(type.getCanonicalName()).append(" {");
         
         for (Method method : methods) {
             Class<?> rt = method.getReturnType();
@@ -872,7 +872,7 @@ public class ExtensionLoader<T> {
                         else {
                             if(!"protocol".equals(value[i]))
                                 if (hasInvocation) 
-                                    getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], defaultExtName);
+                                    getNameCode = String.format("url.getMethodParameter(methodName, \"%s\", \"%s\")", value[i], null);
                                 else
                                     getNameCode = String.format("url.getParameter(\"%s\")", value[i]);
                             else
@@ -915,14 +915,14 @@ public class ExtensionLoader<T> {
                 code.append(");");
             }
             
-            codeBuidler.append("\npublic " + rt.getCanonicalName() + " " + method.getName() + "(");
+            codeBuidler.append("\npublic ").append(rt.getCanonicalName()).append(" ").append(method.getName()).append("(");
             for (int i = 0; i < pts.length; i ++) {
                 if (i > 0) {
                     codeBuidler.append(", ");
                 }
                 codeBuidler.append(pts[i].getCanonicalName());
                 codeBuidler.append(" ");
-                codeBuidler.append("arg" + i);
+                codeBuidler.append("arg").append(i);
             }
             codeBuidler.append(")");
             if (ets.length > 0) {

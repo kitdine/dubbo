@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import com.alibaba.dubbo.common.logger.Logger;
-import com.alibaba.dubbo.common.logger.support.FailsafeLogger;
 
 /**
  * Log4j2Logger
@@ -28,7 +27,7 @@ import com.alibaba.dubbo.common.logger.support.FailsafeLogger;
  *
  * @auther <a href="mailto:kitdnie@gmail.com">JobSHen</a>
  * @date 2017/7/10 9:59
- * @sinece 1.0.0
+ * @sinece 3.0.0
  */
 public class Log4j2Logger implements Logger {
 

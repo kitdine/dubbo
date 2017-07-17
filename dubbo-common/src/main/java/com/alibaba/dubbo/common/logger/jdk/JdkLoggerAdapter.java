@@ -55,7 +55,7 @@ public class JdkLoggerAdapter implements LoggerAdapter {
 					}
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Throwable ignored) {
 		}
 	}
 

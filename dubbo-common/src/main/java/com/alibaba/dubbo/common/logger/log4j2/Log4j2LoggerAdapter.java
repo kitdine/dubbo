@@ -36,7 +36,7 @@ import com.alibaba.dubbo.common.logger.LoggerAdapter;
  *
  * @auther <a href="mailto:kitdnie@gmail.com">JobSHen</a>
  * @date 2017/7/10 13:51
- * @sinece 1.0.0
+ * @sinece 3.0.0
  */
 public class Log4j2LoggerAdapter implements LoggerAdapter {
 
@@ -92,7 +92,7 @@ public class Log4j2LoggerAdapter implements LoggerAdapter {
         this.file = file;
     }
 
-    public static org.apache.logging.log4j.Level toLog4jLevel(Level level) {
+    private static org.apache.logging.log4j.Level toLog4jLevel(Level level) {
         if (level == Level.ALL)
             return org.apache.logging.log4j.Level.ALL;
         if (level == Level.TRACE)
@@ -108,7 +108,7 @@ public class Log4j2LoggerAdapter implements LoggerAdapter {
         return org.apache.logging.log4j.Level.OFF;
     }
 
-    public static Level fromLog4jLevel(org.apache.logging.log4j.Level level) {
+    private static Level fromLog4jLevel(org.apache.logging.log4j.Level level) {
         if (level == org.apache.logging.log4j.Level.ALL)
             return Level.ALL;
         if (level == org.apache.logging.log4j.Level.TRACE)
