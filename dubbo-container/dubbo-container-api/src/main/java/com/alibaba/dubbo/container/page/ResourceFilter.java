@@ -47,7 +47,7 @@ public class ResourceFilter implements Filter {
 
     private final long start = System.currentTimeMillis();
 
-    private final List<String> resources = new ArrayList<String>();
+    private final List<String> resources = new ArrayList<>();
 
     public void init(FilterConfig filterConfig) throws ServletException {
         String config = filterConfig.getInitParameter("resources");
@@ -100,7 +100,7 @@ public class ResourceFilter implements Filter {
     	try {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             byte[] buffer = new byte[8192];
-            int n = 0;
+            int n;
             while (-1 != (n = input.read(buffer))) {
                 output.write(buffer, 0, n);
             }

@@ -23,13 +23,13 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.FileAppender;
 
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.container.page.Menu;
@@ -51,21 +51,18 @@ public class LogPageHandler implements PageHandler {
     @SuppressWarnings("unchecked")
 	public LogPageHandler() {
 	    try {
-			org.apache.log4j.Logger logger = LogManager.getRootLogger();
-	        if (logger != null) {
-	            Enumeration<Appender> appenders = logger.getAllAppenders();
-	            if (appenders != null) {
-	                while (appenders.hasMoreElements()) {
-	                    Appender appender = appenders.nextElement();
-	                    if (appender instanceof FileAppender) {
-	                        FileAppender fileAppender = (FileAppender)appender;
-	                        String filename = fileAppender.getFile();
-	                        file = new File(filename);
-	                        break;
-	                    }
-	                }
-	            }
-	        }
+			org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+			if (logger != null) {
+				Map<String, Appender> appenderMap =
+					((org.apache.logging.log4j.core.Logger) logger).getAppenders();
+				for (Map.Entry<String, Appender> entry : appenderMap.entrySet()) {
+					if (entry.getValue() instanceof FileAppender) {
+						String filename = ((FileAppender) entry.getValue()).getFileName();
+						file = new File(filename);
+						break;
+					}
+				}
+			}
 	    } catch (Throwable t) {
 	    }
     }
@@ -97,8 +94,8 @@ public class LogPageHandler implements PageHandler {
 			}
 		}
 		Level level = LogManager.getRootLogger().getLevel();
-        List<List<String>> rows = new ArrayList<List<String>>();
-        List<String> row = new ArrayList<String>();
+        List<List<String>> rows = new ArrayList<>();
+        List<String> row = new ArrayList<>();
         row.add(content);
         rows.add(row);
         return new Page("Log", "Log",  new String[] {(file == null ? "" : file.getName()) + ", " + size + " bytes, " + modified + ", " + level}, rows);

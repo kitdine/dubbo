@@ -51,29 +51,27 @@ public class Main {
                 args = Constants.COMMA_SPLIT_PATTERN.split(config);
             }
             
-            final List<Container> containers = new ArrayList<Container>();
-            for (int i = 0; i < args.length; i ++) {
-                containers.add(loader.getExtension(args[i]));
+            final List<Container> containers = new ArrayList<>();
+            for (String arg : args) {
+                containers.add(loader.getExtension(arg));
             }
             logger.info("Use container type(" + Arrays.toString(args) + ") to run dubbo serivce.");
             
             if ("true".equals(System.getProperty(SHUTDOWN_HOOK_KEY))) {
-	            Runtime.getRuntime().addShutdownHook(new Thread() {
-	                public void run() {
-	                    for (Container container : containers) {
-	                        try {
-	                            container.stop();
-	                            logger.info("Dubbo " + container.getClass().getSimpleName() + " stopped!");
-	                        } catch (Throwable t) {
-	                            logger.error(t.getMessage(), t);
-	                        }
-	                        synchronized (Main.class) {
-	                            running = false;
-	                            Main.class.notify();
-	                        }
-	                    }
-	                }
-	            });
+	            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    for (Container container : containers) {
+                        try {
+                            container.stop();
+                            logger.info("Dubbo " + container.getClass().getSimpleName() + " stopped!");
+                        } catch (Throwable t) {
+                            logger.error(t.getMessage(), t);
+                        }
+                        synchronized (Main.class) {
+                            running = false;
+                            Main.class.notify();
+                        }
+                    }
+                }));
             }
             
             for (Container container : containers) {

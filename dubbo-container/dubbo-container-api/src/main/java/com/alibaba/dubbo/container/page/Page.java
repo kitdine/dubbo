@@ -35,17 +35,17 @@ public class Page {
     private final List<List<String>> rows;
     
     public Page(String navigation) {
-        this(navigation, (String) null, (String[]) null, (List<List<String>>) null);
+        this(navigation, null, (String[]) null, null);
     }
-
     public Page(String navigation, String title,
-                       String column, String row) {
+        String column, String row) {
         this(navigation, title, column == null ? null : Arrays.asList(new String[]{column}), row == null ? null : stringToList(row));
     }
+
     
     private static List<List<String>> stringToList(String str) {
-        List<List<String>> rows = new ArrayList<List<String>>();
-        List<String> row = new ArrayList<String>();
+        List<List<String>> rows = new ArrayList<>();
+        List<String> row = new ArrayList<>();
         row.add(str);
         rows.add(row);
         return rows;

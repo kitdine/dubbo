@@ -51,9 +51,9 @@ public class PageServlet extends HttpServlet {
 
     protected final Random        random           = new Random();
     
-    protected final Map<String, PageHandler>  pages = new ConcurrentHashMap<String, PageHandler>();
+    protected final Map<String, PageHandler>  pages = new ConcurrentHashMap<>();
 
-    protected final List<PageHandler>    menus = new ArrayList<PageHandler>();
+    protected final List<PageHandler>    menus = new ArrayList<>();
     
     private static PageServlet INSTANCE;
     
@@ -84,7 +84,7 @@ public class PageServlet extends HttpServlet {
                 menus.add(handler);
             }
         }
-        Collections.sort(menus, new MenuComparator());
+        menus.sort(new MenuComparator());
     }
     
     @Override
@@ -106,7 +106,7 @@ public class PageServlet extends HttpServlet {
             } else {
                 if (uri.startsWith("/")) {
                     uri = uri.substring(1);
-                }
+            }
                 if (uri.endsWith(".html")) {
                     uri = uri.substring(0, uri.length() - ".html".length());
                     isHtml = true;
@@ -127,7 +127,7 @@ public class PageServlet extends HttpServlet {
                 Page page = null;
                 try {
                     String query = request.getQueryString();
-                    page = pageHandler.handle(URL.valueOf(request.getRequestURL().toString() 
+                    page = pageHandler.handle(URL.valueOf(request.getRequestURL().toString()
                             + (query == null || query.length() == 0 ? "" : "?" + query)));
                 } catch (Throwable t) {
                     logger.warn(t.getMessage(), t);
