@@ -25,9 +25,9 @@
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	<description>The common module of dubbo project</description>
-	<properties>
+	<!--<properties>
 		<skip_maven_deploy>true</skip_maven_deploy>
-	</properties>
+	</properties>-->
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>

@@ -26,7 +26,7 @@
 	<name>${project.artifactId}</name>
 	<description>The container module of dubbo project</description>
 	<properties>
-		<skip_maven_deploy>true</skip_maven_deploy>
+		<skip_maven_deploy>false</skip_maven_deploy>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,8 +35,9 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
