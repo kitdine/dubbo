@@ -37,7 +37,9 @@ public class CodecSupport {
     private CodecSupport() {
     }
 
-    private static Map<Byte, Serialization> ID_SERIALIZATION_MAP = new HashMap<Byte, Serialization>();
+    private static Map<Byte, Serialization> ID_SERIALIZATION_MAP = new HashMap<>();
+
+    private static Map<String, Serialization> NAME_SERIALIZATION_MAP = new HashMap<>();
 
     static {
         Set<String> supportedExtensions = ExtensionLoader.getExtensionLoader(Serialization.class).getSupportedExtensions();
@@ -52,16 +54,32 @@ public class CodecSupport {
                 continue;
             }
             ID_SERIALIZATION_MAP.put(idByte, serialization);
+            if(NAME_SERIALIZATION_MAP.containsKey(name)) {
+                logger.error("Serialization extension " + serialization.getClass().getName()
+                                    + " has duplicate name to Serialization extension "
+                                    + NAME_SERIALIZATION_MAP.get(name).getClass().getName()
+                                    + ", ignore this Serialization extension");
+                continue;
+            }
+            NAME_SERIALIZATION_MAP.put(name, serialization);
         }
     }
 
-    public static Serialization getSerializationById(Byte id) {
+    private static Serialization getSerializationById(Byte id) {
         return ID_SERIALIZATION_MAP.get(id);
     }
 
+    private static Serialization getSerializationByName(String name) {
+        return NAME_SERIALIZATION_MAP.get(name);
+    }
+
     public static Serialization getSerialization(URL url) {
-        return ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(
-            url.getParameter(Constants.SERIALIZATION_KEY, Constants.DEFAULT_REMOTING_SERIALIZATION));
+        String name = url.getParameter(Constants.SERIALIZATION_KEY, Constants.DEFAULT_REMOTING_SERIALIZATION);
+        Serialization result = getSerializationByName(name);
+        if(null == result) {
+            result = ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(name);
+        }
+        return result;
     }
 
     public static Serialization getSerialization(URL url, Byte id) {

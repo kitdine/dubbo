@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.alibaba.dubbo.common.model.Person;
 import com.alibaba.dubbo.common.model.media.MediaContent;
 import com.alibaba.dubbo.common.serialize.ObjectInput;
 import com.alibaba.dubbo.common.serialize.ObjectOutput;
@@ -237,7 +238,9 @@ public class FastJsonSerializationTest extends AbstractSerializationPersionOkTes
     
     @Ignore("person type missing")
     @Test
-    public void test_Person() throws Exception {}
+    public void test_Person() throws Exception {
+        assertObject(new Person());
+    }
     
     @Ignore("person type missing")
     @Test

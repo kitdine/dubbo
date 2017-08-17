@@ -26,7 +26,7 @@ import com.alibaba.dubbo.common.serialize.support.fst.FstSerialization;
  * @date 2017/7/17 16:03
  * @sinece 1.0.0
  */
-public class FstSerializationTest extends AbstractSerializationPersionFailTest {
+public class FstSerializationTest extends AbstractSerializationTest {
     {
         serialization = new FstSerialization();
     }

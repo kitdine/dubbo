@@ -53,11 +53,6 @@ public class ClientDelegate implements Client {
         client.reset(url);
     }
     
-    @Deprecated
-    public void reset(com.alibaba.dubbo.common.Parameters parameters){
-        reset(getUrl().addParameters(parameters.getParameters()));
-    }
-
     public URL getUrl() {
         return client.getUrl();
     }
@@ -109,6 +104,7 @@ public class ClientDelegate implements Client {
     public void close() {
         client.close();
     }
+
     public void close(int timeout) {
         client.close(timeout);
     }

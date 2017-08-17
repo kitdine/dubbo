@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 import com.alibaba.dubbo.common.serialize.ObjectInput;
 import com.alibaba.dubbo.common.utils.PojoUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.ParserConfig;
 
 /**
  * JsonObjectInput
@@ -41,6 +42,7 @@ public class FastJsonObjectInput implements ObjectInput {
     }
 
     public FastJsonObjectInput(Reader reader){
+        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
         this.reader = new BufferedReader(reader);
     }
 

@@ -26,7 +26,7 @@ import com.alibaba.dubbo.common.serialize.support.kryo.KryoSerialization;
  * @date 2017/7/17 16:13
  * @sinece 1.0.0
  */
-public class KryoSerializationTest extends AbstractSerializationPersionFailTest {
+public class KryoSerializationTest extends AbstractSerializationTest {
     {
         serialization = new KryoSerialization();
     }

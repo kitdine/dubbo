@@ -45,6 +45,7 @@ import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.model.AnimalEnum;
 import com.alibaba.dubbo.common.model.BizException;
 import com.alibaba.dubbo.common.model.BizExceptionNoDefaultConstructor;
+import com.alibaba.dubbo.common.model.Person;
 import com.alibaba.dubbo.common.model.SerializablePerson;
 import com.alibaba.dubbo.common.model.media.Image;
 import com.alibaba.dubbo.common.model.media.Image.Size;
@@ -232,7 +233,6 @@ public abstract class AbstractSerializationTest {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
                 byteArrayOutputStream.toByteArray());
         ObjectInput deserialize = serialization.deserialize(url, byteArrayInputStream);
-
         assertTrue(1.28F == deserialize.readFloat());
 
         try {

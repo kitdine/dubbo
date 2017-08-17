@@ -24,13 +24,13 @@ import java.nio.ByteBuffer;
 /**
  * @author <a href="mailto:gang.lvg@alibaba-inc.com">kimi</a>
  */
-public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
+public class DirectChannelBuffer extends AbstractChannelBuffer {
 
     private final ByteBuffer buffer;
 
     private final int capacity;
 
-    public ByteBufferBackedChannelBuffer(ByteBuffer buffer) {
+    public DirectChannelBuffer(ByteBuffer buffer) {
         if (buffer == null) {
             throw new NullPointerException("buffer");
         }
@@ -40,7 +40,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
         writerIndex(capacity);
     }
 
-    public ByteBufferBackedChannelBuffer(ByteBufferBackedChannelBuffer buffer) {
+    public DirectChannelBuffer(DirectChannelBuffer buffer) {
         this.buffer = buffer.buffer;
         capacity = buffer.capacity;
         setIndex(buffer.readerIndex(), buffer.writerIndex());
@@ -73,7 +73,7 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
             : ByteBuffer.allocate(length);
         dst.put(src);
         dst.clear();
-        return new ByteBufferBackedChannelBuffer(dst);
+        return new DirectChannelBuffer(dst);
     }
 
     
@@ -106,8 +106,8 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
     
     public void getBytes(int index, ChannelBuffer dst, int dstIndex, int length) {
-        if (dst instanceof ByteBufferBackedChannelBuffer) {
-            ByteBufferBackedChannelBuffer bbdst = (ByteBufferBackedChannelBuffer) dst;
+        if (dst instanceof DirectChannelBuffer) {
+            DirectChannelBuffer bbdst = (DirectChannelBuffer) dst;
             ByteBuffer data = bbdst.buffer.duplicate();
 
             data.limit(dstIndex + length).position(dstIndex);
@@ -163,8 +163,8 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
     
     public void setBytes(int index, ChannelBuffer src, int srcIndex, int length) {
-        if (src instanceof ByteBufferBackedChannelBuffer) {
-            ByteBufferBackedChannelBuffer bbsrc = (ByteBufferBackedChannelBuffer) src;
+        if (src instanceof DirectChannelBuffer) {
+            DirectChannelBuffer bbsrc = (DirectChannelBuffer) src;
             ByteBuffer data = bbsrc.buffer.duplicate();
 
             data.limit(srcIndex + length).position(srcIndex);

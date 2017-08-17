@@ -20,7 +20,7 @@ import java.util.Arrays;
 /**
  * @author ding.lid
  */
-public class Person {
+public class Person{
     private String name = "name1";
     
     byte oneByte = 123;

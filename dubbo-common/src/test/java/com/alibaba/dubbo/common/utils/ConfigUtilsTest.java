@@ -48,45 +48,45 @@ public class ConfigUtilsTest {
     @Test
     public void testMergeValues() {
         List<String> merged = ConfigUtils.mergeValues(Serialization.class, "aaa,bbb,default.cunstom",
-                toArray("dubbo","default.hessian2","json"));
-        Assert.assertEquals(toArray("dubbo", "json", "aaa", "bbb", "default.cunstom"), merged);
+                toArray("dubbo","default.hessian2","fastjson"));
+        Assert.assertEquals(toArray("dubbo", "fastjson", "aaa", "bbb", "default.cunstom"), merged);
     }
-    
+
     /**
      * 测试点1：用户配置参数在最后 测试点2：用户配置参数如果带-，会删除同名的默认参数 测试点3：default开头的默认参数会被删除
      */
     @Test
     public void testMergeValues_addDefault() {
         List<String> merged = ConfigUtils.mergeValues(Serialization.class, "aaa,bbb,default,zzz",
-                toArray("dubbo","default.hessian2","json"));
-        Assert.assertEquals(toArray("aaa", "bbb","dubbo", "json",  "zzz"), merged);
+                toArray("dubbo","default.hessian2","fastjson"));
+        Assert.assertEquals(toArray("aaa", "bbb","dubbo", "fastjson",  "zzz"), merged);
     }
-    
+
     /**
      * 测试点1：用户配置-default，会删除所有默认参数
      */
     @Test
     public void testMergeValuesDeleteDefault() {
-        List<String> merged = ConfigUtils.mergeValues(Serialization.class, "-default", toArray("dubbo","default.hessian2","json"));
+        List<String> merged = ConfigUtils.mergeValues(Serialization.class, "-default", toArray("dubbo","default.hessian2","fastjson"));
         Assert.assertEquals(toArray(), merged);
     }
-    
+
     /**
      * 测试点1：用户配置-default，会删除所有默认参数
      */
     @Test
     public void testMergeValuesDeleteDefault_2() {
-        List<String> merged = ConfigUtils.mergeValues(Serialization.class, "-default,aaa", toArray("dubbo","default.hessian2","json"));
+        List<String> merged = ConfigUtils.mergeValues(Serialization.class, "-default,aaa", toArray("dubbo","default.hessian2","fastjson"));
         Assert.assertEquals(toArray("aaa"), merged);
     }
-    
+
     /**
      * 测试点1：用户配置-default，会删除所有默认参数
      */
     @Test
     public void testMergeValuesDelete() {
-        List<String> merged = ConfigUtils.mergeValues(Serialization.class, "-dubbo,aaa", toArray("dubbo","default.hessian2","json"));
-        Assert.assertEquals(toArray("json", "aaa"), merged);
+        List<String> merged = ConfigUtils.mergeValues(Serialization.class, "-dubbo,aaa", toArray("dubbo","default.hessian2","fastjson"));
+        Assert.assertEquals(toArray("fastjson", "aaa"), merged);
     }
     
     @Test

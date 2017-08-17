@@ -55,9 +55,7 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
         closed = true;
     }
 
-    public void close(int timeout) {
-        close();
-    }
+    public abstract void close(int timeout);
 
     public URL getUrl() {
         return url;
@@ -76,14 +74,6 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
         } else {
             return handler;
         }
-    }
-    
-    /**
-     * @return ChannelHandler
-     */
-    @Deprecated
-    public ChannelHandler getHandler() {
-        return getDelegateHandler();
     }
     
     /**

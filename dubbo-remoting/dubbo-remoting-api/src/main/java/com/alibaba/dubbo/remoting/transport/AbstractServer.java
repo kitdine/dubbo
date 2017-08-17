@@ -49,7 +49,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Server 
     private int                            accepts;
 
     private int                            idleTimeout = 600; //600 seconds
-    
+
     protected static final String SERVER_THREAD_POOL_NAME  ="DubboServerHandler";
     
     ExecutorService executor;

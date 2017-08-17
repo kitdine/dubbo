@@ -23,8 +23,6 @@ import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.remoting.Codec2;
 import com.alibaba.dubbo.remoting.ChannelHandler;
-import com.alibaba.dubbo.remoting.Codec;
-import com.alibaba.dubbo.remoting.transport.codec.CodecAdapter;
 
 /**
  * AbstractEndpoint
@@ -81,11 +79,6 @@ public abstract class AbstractEndpoint extends AbstractPeer implements Resetable
             logger.error(t.getMessage(), t);
         }
     }
-    
-    @Deprecated
-    public void reset(com.alibaba.dubbo.common.Parameters parameters){
-        reset(getUrl().addParameters(parameters.getParameters()));
-    }
 
     protected Codec2 getCodec() {
         return codec;
@@ -100,13 +93,7 @@ public abstract class AbstractEndpoint extends AbstractPeer implements Resetable
     }
 
     protected static Codec2 getChannelCodec(URL url) {
-        String codecName = url.getParameter(Constants.CODEC_KEY, "telnet");
-        if (ExtensionLoader.getExtensionLoader(Codec2.class).hasExtension(codecName)) {
-            return ExtensionLoader.getExtensionLoader(Codec2.class).getExtension(codecName);
-        } else {
-            return new CodecAdapter(ExtensionLoader.getExtensionLoader(Codec.class)
-                                               .getExtension(codecName));
-        }
+        return ExtensionLoader.getExtensionLoader(Codec2.class).getExtension(url.getParameter(Constants.CODEC_KEY, Constants.DEFAULT_CODEC));
     }
 
 }

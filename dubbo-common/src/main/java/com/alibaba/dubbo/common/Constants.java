@@ -98,7 +98,7 @@ public class Constants {
 
     public static final String  DEFAULT_REMOTING_CODEC             = "dubbo";
 
-    public static final String  DEFAULT_REMOTING_SERIALIZATION     = "hessian2";
+    public static final String  DEFAULT_REMOTING_SERIALIZATION     = "fastjson";
 
     public static final String  DEFAULT_HTTP_SERVER                = "servlet";
 
@@ -257,6 +257,8 @@ public class Constants {
     public static final String  DEFAULT_PROMPT                     = "dubbo>";
 
     public static final String  CODEC_KEY                          = "codec";
+
+    public static final String DEFAULT_CODEC                       = "telnet";
 
     public static final String  SERIALIZATION_KEY                  = "serialization";
 
@@ -579,6 +581,9 @@ public class Constants {
 
     public static final String GENERIC_SERIALIZATION_BEAN          = "bean";
 
+    public static final String RECONNECT_WARNING_PERIOD_KEY        = "reconnect.waring.period";
+
+    public static final long  RECONNECT_WARNING_PERIOD           = 60 * 60 / 2;
     /*
      * private Constants(){ }
      */

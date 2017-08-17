@@ -40,7 +40,7 @@ public class FastJsonSerialization implements Serialization {
     }
     
     public ObjectOutput serialize(URL url, OutputStream output) throws IOException {
-        return new FastJsonObjectOutput(output);
+        return new FastJsonObjectOutput(output, url.getParameter("with.class", true));
     }
 
     public ObjectInput deserialize(URL url, InputStream input) throws IOException {

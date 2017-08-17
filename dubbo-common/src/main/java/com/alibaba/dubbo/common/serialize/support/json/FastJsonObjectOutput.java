@@ -34,13 +34,24 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 public class FastJsonObjectOutput implements ObjectOutput {
 
     private final PrintWriter writer;
+
+    private final boolean writeClass;
     
     public FastJsonObjectOutput(OutputStream out) {
-        this(new OutputStreamWriter(out));
+        this(new OutputStreamWriter(out), false);
     }
     
     public FastJsonObjectOutput(Writer writer) {
+        this(writer, false);
+    }
+
+    public FastJsonObjectOutput(OutputStream out, boolean writeClass) {
+        this(new OutputStreamWriter(out), writeClass);
+    }
+
+    public FastJsonObjectOutput(Writer writer, boolean writeClass) {
         this.writer = new PrintWriter(writer);
+        this.writeClass = writeClass;
     }
 
     public void writeBool(boolean v) throws IOException {
@@ -87,6 +98,9 @@ public class FastJsonObjectOutput implements ObjectOutput {
         SerializeWriter out = new SerializeWriter();
         JSONSerializer serializer = new JSONSerializer(out);
         serializer.config(SerializerFeature.WriteEnumUsingToString, true);
+        if(writeClass) {
+            serializer.config(SerializerFeature.WriteClassName, true);
+        }
         serializer.write(obj);
         out.writeTo(writer);
         writer.println();

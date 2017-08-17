@@ -308,7 +308,7 @@ public class ExtensionLoader<T> {
 		}
 		Holder<Object> holder = cachedInstances.get(name);
 		if (holder == null) {
-		    cachedInstances.putIfAbsent(name, new Holder<Object>());
+		    cachedInstances.putIfAbsent(name, new Holder<>());
 		    holder = cachedInstances.get(name);
 		}
 		Object instance = holder.get();

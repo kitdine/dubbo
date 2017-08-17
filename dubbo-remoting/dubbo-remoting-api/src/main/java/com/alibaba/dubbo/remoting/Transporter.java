@@ -15,8 +15,6 @@
  */
 package com.alibaba.dubbo.remoting;
 
-import javax.sound.midi.Receiver;
-
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.Adaptive;
@@ -38,7 +36,7 @@ public interface Transporter {
     /**
      * Bind a server.
      * 
-     * @see com.alibaba.dubbo.remoting.Transporters#bind(URL, Receiver, ChannelHandler)
+     * @see com.alibaba.dubbo.remoting.Transporters#bind(URL, ChannelHandler...)
      * @param url server url
      * @param handler
      * @return server
@@ -50,7 +48,7 @@ public interface Transporter {
     /**
      * Connect to a server.
      * 
-     * @see com.alibaba.dubbo.remoting.Transporters#connect(URL, Receiver, ChannelListener)
+     * @see com.alibaba.dubbo.remoting.Transporters#connect(URL, ChannelHandler...)
      * @param url server url
      * @param handler
      * @return client

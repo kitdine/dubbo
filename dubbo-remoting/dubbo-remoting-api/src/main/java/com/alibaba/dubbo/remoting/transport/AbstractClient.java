@@ -53,13 +53,15 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
     private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
     
     protected static final String CLIENT_THREAD_POOL_NAME  ="DubboClientHandler";
+
+    private static final String CLIENT_RECONNECTED_THREAD_PREFIX_NAME = "DubboClientReconnectTimer";
     
-    private static final AtomicInteger CLIENT_THREAD_POOL_ID = new AtomicInteger();
+    private static final AtomicInteger CLIENT_THREAD_POOL_ID = new AtomicInteger(0);
 
     private final Lock            connectLock = new ReentrantLock();
     
-    private static final ScheduledThreadPoolExecutor reconnectExecutorService = new ScheduledThreadPoolExecutor(2, new NamedThreadFactory("DubboClientReconnectTimer", true));
-    
+    private static final ScheduledThreadPoolExecutor reconnectExecutorService = new ScheduledThreadPoolExecutor(2, new NamedThreadFactory(CLIENT_RECONNECTED_THREAD_PREFIX_NAME, true));
+
     private volatile  ScheduledFuture<?> reconnectExecutorFuture = null;
     
     protected volatile ExecutorService executor;
@@ -72,13 +74,12 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
     private final AtomicBoolean reconnect_error_log_flag = new AtomicBoolean(false) ;
     
     //重连warning的间隔.(waring多少次之后，warning一次) //for test
-    private final int reconnect_warning_period ;
+    private final long reconnect_warning_period ;
     
     //the last successed connected time
     private long lastConnectedTime = System.currentTimeMillis();
     
     private final long shutdown_timeout ;
-    
     
     public AbstractClient(URL url, ChannelHandler handler) throws RemotingException {
         super(url, handler);
@@ -88,7 +89,7 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
         shutdown_timeout = url.getParameter(Constants.SHUTDOWN_TIMEOUT_KEY, Constants.DEFAULT_SHUTDOWN_TIMEOUT);
         
         //默认重连间隔2s，1800表示1小时warning一次.
-        reconnect_warning_period = url.getParameter("reconnect.waring.period", 1800);
+        reconnect_warning_period = url.getParameter(Constants.RECONNECT_WARNING_PERIOD_KEY, Constants.RECONNECT_WARNING_PERIOD);
         
         try {
             doOpen();
@@ -138,27 +139,25 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
         //reconnect=false to close reconnect 
         int reconnect = getReconnectParam(getUrl());
         if(reconnect > 0 && (reconnectExecutorFuture == null || reconnectExecutorFuture.isCancelled())){
-            Runnable connectStatusCheckCommand =  new Runnable() {
-                public void run() {
-                    try {
-                        if (! isConnected()) {
-                            connect();
-                        } else {
-                            lastConnectedTime = System.currentTimeMillis();
+            Runnable connectStatusCheckCommand = () -> {
+                try {
+                    if (! isConnected()) {
+                        connect();
+                    } else {
+                        lastConnectedTime = System.currentTimeMillis();
+                    }
+                } catch (Throwable t) {
+                    String errorMsg = "client reconnect to "+getUrl().getAddress()+" find error . url: "+ getUrl();
+                    // wait registry sync provider list
+                    if (System.currentTimeMillis() - lastConnectedTime > shutdown_timeout){
+                        if (!reconnect_error_log_flag.get()){
+                            reconnect_error_log_flag.set(true);
+                            logger.error(errorMsg, t);
+                            return ;
                         }
-                    } catch (Throwable t) { 
-                        String errorMsg = "client reconnect to "+getUrl().getAddress()+" find error . url: "+ getUrl();
-                        // wait registry sync provider list
-                        if (System.currentTimeMillis() - lastConnectedTime > shutdown_timeout){
-                            if (!reconnect_error_log_flag.get()){
-                                reconnect_error_log_flag.set(true);
-                                logger.error(errorMsg, t);
-                                return ;
-                            }
-                        }
-                        if ( reconnect_count.getAndIncrement() % reconnect_warning_period == 0){
-                            logger.warn(errorMsg, t);
-                        }
+                    }
+                    if ( reconnect_count.getAndIncrement() % reconnect_warning_period == 0){
+                        logger.warn(errorMsg, t);
                     }
                 }
             };
@@ -265,7 +264,7 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
         Channel channel = getChannel();
         //TODO getChannel返回的状态是否包含null需要改进
         if (channel == null || ! channel.isConnected()) {
-          throw new RemotingException(this, "message can not send, because channel is closed . url:" + getUrl());
+            throw new RemotingException(this, "message can not send, because channel is closed . url:" + getUrl());
         }
         channel.send(message, sent);
     }

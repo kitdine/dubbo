@@ -76,7 +76,7 @@ public final class ChannelBuffers {
         if (buffer.hasArray()) {
             return wrappedBuffer(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.remaining());
         } else {
-            return new ByteBufferBackedChannelBuffer(buffer);
+            return new DirectChannelBuffer(buffer);
         }
     }
 
@@ -85,7 +85,7 @@ public final class ChannelBuffers {
             return EMPTY_BUFFER;
         }
 
-        ChannelBuffer buffer = new ByteBufferBackedChannelBuffer(
+        ChannelBuffer buffer = new DirectChannelBuffer(
             ByteBuffer.allocateDirect(capacity));
         buffer.clear();
         return buffer;

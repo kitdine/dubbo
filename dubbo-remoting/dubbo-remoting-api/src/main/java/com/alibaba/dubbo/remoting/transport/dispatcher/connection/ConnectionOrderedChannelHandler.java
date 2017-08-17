@@ -42,7 +42,7 @@ public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
         String threadName = url.getParameter(Constants.THREAD_NAME_KEY,Constants.DEFAULT_THREAD_NAME);
         connectionExecutor = new ThreadPoolExecutor(1, 1,
                                      0L, TimeUnit.MILLISECONDS,
-                                     new LinkedBlockingQueue<Runnable>(url.getPositiveParameter(Constants.CONNECT_QUEUE_CAPACITY, Integer.MAX_VALUE)),
+            new LinkedBlockingQueue<>(url.getPositiveParameter(Constants.CONNECT_QUEUE_CAPACITY, Integer.MAX_VALUE)),
                                      new NamedThreadFactory(threadName, true),
                                      new AbortPolicyWithReport(threadName, url)
             );  // FIXME 没有地方释放connectionExecutor！
@@ -64,6 +64,18 @@ public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
             connectionExecutor.execute(new ChannelEventRunnable(channel, handler ,ChannelState.DISCONNECTED));
         }catch (Throwable t) {
             throw new ExecutionException("disconnected event", channel, getClass()+" error when process disconnected event ." , t);
+        }
+    }
+
+    // TODO maybe bug
+    public void close() {
+        try {
+            if (connectionExecutor != null) {
+                connectionExecutor.shutdown();
+            }
+            super.close();
+        } catch (Throwable t) {
+            logger.warn("fail to destroy thread pool of server: " + t.getMessage(), t);
         }
     }
 

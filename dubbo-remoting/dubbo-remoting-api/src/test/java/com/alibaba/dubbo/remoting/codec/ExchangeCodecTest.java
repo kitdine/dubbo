@@ -63,7 +63,7 @@ public class ExchangeCodecTest extends TelnetCodecTest{
     private static final byte     MAGIC_HIGH         = (byte) Bytes.short2bytes(MAGIC)[0];
     private static final byte     MAGIC_LOW          = (byte) Bytes.short2bytes(MAGIC)[1];
     Serialization serialization = getSerialization(Constants.DEFAULT_REMOTING_SERIALIZATION);
-    
+//    Serialization serialization = getSerialization("hessian2");
     
 
     private Object decode(byte[] request) throws IOException{
@@ -89,7 +89,7 @@ public class ExchangeCodecTest extends TelnetCodecTest{
         byte[] request = join(header, data);
         return request;
     }
-    
+
     private byte[] assemblyDataProtocol(byte[] header){
         Person request = new Person();
         byte[] newbuf = join(header, objectToByte(request));
@@ -183,8 +183,8 @@ public class ExchangeCodecTest extends TelnetCodecTest{
     
     @Test
     public void test_Decode_Return_Response_Person() throws IOException{
-        //00000010-response/oneway/hearbeat=false/hessian |20-stats=ok|id=0|length=0
-        byte[] header = new byte[] { MAGIC_HIGH, MAGIC_LOW, 2, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        //00000010-response/oneway/hearbeat=false/fastjson |20-stats=ok|id=0|length=0
+        byte[] header = new byte[] { MAGIC_HIGH, MAGIC_LOW, 6, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         Person person = new Person();
         byte[] request = getRequestBytes(person, header);
         
@@ -196,7 +196,7 @@ public class ExchangeCodecTest extends TelnetCodecTest{
     
     @Test //status输入有问题，序列化时读取信息出错.
     public void test_Decode_Return_Response_Error() throws IOException{
-        byte[] header = new byte[] { MAGIC_HIGH, MAGIC_LOW, 2, 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        byte[] header = new byte[] { MAGIC_HIGH, MAGIC_LOW, 6, 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         String errorString = "encode request data error ";
         byte[] request = getRequestBytes(errorString, header);
         Response obj = (Response)decode(request);
@@ -426,7 +426,7 @@ public class ExchangeCodecTest extends TelnetCodecTest{
             codec.encode(channel, encodeBuffer, request);
             Assert.fail();
         } catch (IOException e) {
-            Assert.assertTrue(e.getMessage().startsWith("Data length too large: " + 6));
+            Assert.assertTrue(e.getMessage().startsWith("Data length too large: " + 9));
         }
 
         Response response = new Response(1L);

@@ -228,7 +228,7 @@ public class TelnetCodecTest {
     
     
     //======================================================
-    URL url = URL.valueOf("dubbo://10.20.30.40:20880");
+    URL url = URL.valueOf("dubbo://192.168.3.141:20880");
     
     @Test
     public void testDecode_String_ClientSide() throws IOException{
